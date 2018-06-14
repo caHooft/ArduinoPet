@@ -1,3 +1,0 @@
-Domotica.MainActivity, MIPAPP;md55fbe978285d38eb169618b1e24f9b5d3.MainActivity
-Domotica.MainActivity;md55fbe978285d38eb169618b1e24f9b5d3.MainActivity
-domotica.MainActivity;md55fbe978285d38eb169618b1e24f9b5d3.MainActivity

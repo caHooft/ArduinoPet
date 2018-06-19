@@ -13,9 +13,6 @@
  * LED1M
  * LED2M
  * InitWifi
- * PlayNote
- * PlayTone
- * JingleBells
  * Sing
  * Buzz
  */
@@ -59,41 +56,28 @@ int mario_melody[] =
   NOTE_C7, NOTE_D7, NOTE_B6, 0, 0, NOTE_C7, 0, 0, NOTE_G6, 0, 0, NOTE_E6, 0, 0, NOTE_A6, 0, NOTE_B6, 0, NOTE_AS6, NOTE_A6, 0,
   NOTE_G6, NOTE_E7, NOTE_G7, NOTE_A7, 0, NOTE_F7, NOTE_G7, 0, NOTE_E7, 0, NOTE_C7, NOTE_D7, NOTE_B6, 0, 0,
 };
+
 int mario_tempo[] = 
 {
   12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12,12, 12, 12, 12, 
   9, 9, 9,12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12,
   9, 9, 9, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12,
 };
+
 int underworld_melody[] = 
 {
-  NOTE_C4, NOTE_C5, NOTE_A3, NOTE_A4,  NOTE_AS3, NOTE_AS4, 0,  0,  NOTE_C4, NOTE_C5, NOTE_A3, NOTE_A4,  NOTE_AS3, NOTE_AS4, 0,  0,
-  NOTE_F3, NOTE_F4, NOTE_D3, NOTE_D4,  NOTE_DS3, NOTE_DS4, 0,  0,  NOTE_F3, NOTE_F4, NOTE_D3, NOTE_D4,  NOTE_DS3, NOTE_DS4, 0,
-  0, NOTE_DS4, NOTE_CS4, NOTE_D4,  NOTE_CS4, NOTE_DS4,  NOTE_DS4, NOTE_GS3,  NOTE_G3, NOTE_CS4,  NOTE_C4, NOTE_FS4, NOTE_F4, NOTE_E3,
+  NOTE_C4, NOTE_C5, NOTE_A3, NOTE_A4,  NOTE_AS3, NOTE_AS4, 0,  0,  NOTE_C4, NOTE_C5, NOTE_A3, NOTE_A4,  NOTE_AS3, NOTE_AS4, 0, 0,
+  NOTE_F3, NOTE_F4, NOTE_D3, NOTE_D4,  NOTE_DS3, NOTE_DS4, 0,  0,  NOTE_F3, NOTE_F4, NOTE_D3, NOTE_D4,  NOTE_DS3, NOTE_DS4, 0, 0, 
+  NOTE_DS4, NOTE_CS4, NOTE_D4,  NOTE_CS4, NOTE_DS4,  NOTE_DS4, NOTE_GS3,  NOTE_G3, NOTE_CS4,  NOTE_C4, NOTE_FS4, NOTE_F4, NOTE_E3,
   NOTE_AS4, NOTE_A4,  NOTE_GS4, NOTE_DS4, NOTE_B3,  NOTE_AS3, NOTE_A3, NOTE_GS3,  0, 0, 0
 };
+
 int underworld_tempo[] = 
 {
   12, 12, 12, 12,  12, 12, 6,  3,  12, 12, 12, 12,  12, 12, 6, 3,  12, 12, 12, 12, 12, 12, 6,  3, 12, 12, 12, 12, 12, 12, 6, 6, 18,
   18, 18, 6, 6, 6, 6, 6, 6, 18, 18, 18, 18, 18, 18, 10, 10, 10, 10, 10, 10, 3, 3, 3
 };
 
-int jingle_melody[] = 
-{
-  NOTE_e,NOTE_e,NOTE_e,NOTE_e,NOTE_e,NOTE_e,NOTE_e,NOTE_g,NOTE_c,NOTE_d,NOTE_e, NOTE_x, NOTE_f, NOTE_f, NOTE_f, NOTE_f, NOTE_f,NOTE_e,
-  NOTE_e,NOTE_e,NOTE_e,NOTE_d,NOTE_d,NOTE_e,NOTE_d,NOTE_g
-};
-
-int jingle_tempo[] = 
-{
- 4, 4, 8, 4, 4, 8, 4, 4, 4, 4, 16, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 8, 8 
-};
-/*
-int jingle_tempo[] = 
-{
- 1, 1, 2, 1, 1, 2, 1, 1, 1, 1, 4, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2 
-};
-*/
 
 void setup() 
 {
@@ -101,7 +85,7 @@ void setup()
   
   //Seting up some hardware
   myServo.attach(servo);
-  myServo.write(90);
+  myServo.write(97);
 
   //Initializing pins
   pinMode(LED1, OUTPUT);
@@ -180,7 +164,7 @@ void SendMood()
 //Method for the making of sounds
 void Sounds()
 {
-  Sing(3);
+  Sing(0);
 }
 
 //Method for controlling LED batch 1
@@ -205,6 +189,11 @@ void Sing(int s)
 {
   song = s;
 
+  if(song == 0)
+  {
+    return;
+  }
+  
   if(song == 1)
   {
     int size = sizeof(mario_melody) / sizeof(int);
@@ -237,24 +226,7 @@ void Sing(int s)
  
       Buzz(0, noteDuration);
     }
-  } 
-
-  if (song == 3) 
-  {
-    int size = sizeof(jingle_melody) / sizeof(int);
-    
-    for (int i = 0; i < size; i++) 
-    {
-      int noteDuration = 1000 / jingle_tempo[i];
- 
-      Buzz(jingle_melody[i], noteDuration);
- 
-      int noteDelay = noteDuration * 1.30;
-      delay(noteDelay);
- 
-      Buzz(0, noteDuration);
-    }
-  } 
+  }  
 }
 
 void Buzz(long frequency, long length) 

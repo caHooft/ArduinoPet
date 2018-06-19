@@ -13,8 +13,8 @@
  * LED1M
  * LED2M
  * InitWifi
- * PlayTone
  * PlayNote
+ * PlayTone
  * JingleBells
  */
 
@@ -43,11 +43,6 @@ float distance;
 int servoValue;
 float lightvalue;
 float THvalue;
-int JingleBellstempo = 300;
-
-//Declaring some arrays
-char JingleBellsnotes[] = "eeeeeeegcde fffffeeeeddedg";
-int JingleBellsbeats[] = {1, 1, 2, 1, 1, 2, 1, 1, 1, 1, 4, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2};
 
 //Declaring some hardware
 Servo myServo;
@@ -157,17 +152,6 @@ void InitWiFi()
   
 }
 
-void playTone(int tone, int j) 
-{
-  for (long i = 0; i < j * 1000L; i += tone * 12) 
-  {
-    digitalWrite(spkr, HIGH);
-    delayMicroseconds(tone);
-    digitalWrite(spkr, LOW);
-    delayMicroseconds(tone);
-  }
-}
-
 void playNote(char note, int j) 
 {
   char names[] = { 'c', 'd', 'e', 'f', 'g', 'a', 'b', 'C' };
@@ -183,8 +167,23 @@ void playNote(char note, int j)
   }
 }
 
+void playTone(int tone, int j) 
+{
+  for (long i = 0; i < j * 1000L; i += tone * 12) 
+  {
+    digitalWrite(spkr, HIGH);
+    delayMicroseconds(tone);
+    digitalWrite(spkr, LOW);
+    delayMicroseconds(tone);
+  }
+}
+
 void JingleBells()
 {
+  int JingleBellstempo = 400;
+  char JingleBellsnotes[] = "eeeeeeegcde fffffeeeeddedg";
+  int JingleBellsbeats[] = {1, 1, 2, 1, 1, 2, 1, 1, 1, 1, 4, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2};
+  
   for (int i = 0; i < 26; i++) 
   {
     if (JingleBellsnotes[i] == ' ') 

@@ -34,7 +34,7 @@ int beats[] = { 1, 1, 2, 1, 1, 2, 1, 1, 1, 1, 4, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
 
 int tempo = 300;
 void playTone(int tone, int duration) {
-  for (long i = 0; i < duration * 1000L; i += tone * 2) {
+  for (long i = 0; i < duration * 1000L; i += tone * 12) {
     digitalWrite(spkr, HIGH);
     delayMicroseconds(tone);
     digitalWrite(spkr, LOW);

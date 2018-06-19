@@ -4,6 +4,7 @@
 
 //Declaring pins
 //Niet gebruiken ivm WiFi shield: 4, 7, 10, 11, 12, 13
+#define TH 3
 #define LED1 5
 #define LED2 6
 #define spkr 8
@@ -12,7 +13,6 @@
 #define mtr2 51
 #define mtr3 52
 #define mtr4 53
-
 
 #define trig A0
 #define echo A1
@@ -23,6 +23,7 @@ float duration;
 float distance;
 int servoValue;
 float lightvalue;
+float THvalue;
 
 //Declaring some hardware
 Servo myServo;
@@ -78,14 +79,8 @@ void ReadUSonic()
 }
 
 
-//Method for measuring temperature
-void ReadTemp()
-{
-  
-}
-
-//Method for measuring humidity
-void ReadHumid()
+//Method for measuring temperature & humidity
+void ReadTH()
 {
   
 }

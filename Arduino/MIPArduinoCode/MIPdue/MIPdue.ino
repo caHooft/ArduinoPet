@@ -77,16 +77,23 @@ int underworld_tempo[] =
   12, 12, 12, 12,  12, 12, 6,  3,  12, 12, 12, 12,  12, 12, 6, 3,  12, 12, 12, 12, 12, 12, 6,  3, 12, 12, 12, 12, 12, 12, 6, 6, 18,
   18, 18, 6, 6, 6, 6, 6, 6, 18, 18, 18, 18, 18, 18, 10, 10, 10, 10, 10, 10, 3, 3, 3
 };
+
 int jingle_melody[] = 
 {
-  NOTE_c, NOTE_d, NOTE_e, NOTE_f, NOTE_g, NOTE_a, NOTE_b, NOTE_C
-}
+  NOTE_e,NOTE_e,NOTE_e,NOTE_e,NOTE_e,NOTE_e,NOTE_e,NOTE_g,NOTE_c,NOTE_d,NOTE_e, NOTE_x, NOTE_f, NOTE_f, NOTE_f, NOTE_f, NOTE_f,NOTE_e,
+  NOTE_e,NOTE_e,NOTE_e,NOTE_d,NOTE_d,NOTE_e,NOTE_d,NOTE_g
+};
+
+int jingle_tempo[] = 
+{
+ 4, 4, 8, 4, 4, 8, 4, 4, 4, 4, 16, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 8, 8 
+};
+/*
 int jingle_tempo[] = 
 {
  1, 1, 2, 1, 1, 2, 1, 1, 1, 1, 4, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2 
-}
-
-
+};
+*/
 
 void setup() 
 {
@@ -252,8 +259,6 @@ void Sing(int s)
 
 void Buzz(long frequency, long length) 
 {
-  digitalWrite(13, HIGH);
-  
   long delayValue = 1000000 / frequency / 2;
   long Cycles = frequency * length / 1000; 
   
@@ -264,7 +269,5 @@ void Buzz(long frequency, long length)
     digitalWrite(spkr, LOW); 
     delayMicroseconds(delayValue); 
   }
-  
-  digitalWrite(13, LOW);
 }
 

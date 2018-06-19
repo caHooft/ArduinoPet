@@ -43,7 +43,7 @@ float distance;
 int servoValue;
 float lightvalue;
 float THvalue;
-int tempo = 300;
+int JingleBellstempo = 300;
 
 //Declaring some arrays
 char JingleBellsnotes[] = "eeeeeeegcde fffffeeeeddedg";
@@ -187,14 +187,14 @@ void JingleBells()
 {
   for (int i = 0; i < 26; i++) 
   {
-    if (notes[i] == ' ') 
+    if (JingleBellsnotes[i] == ' ') 
     {
-      delay(beats[i] * tempo);
+      delay(JingleBellsbeats[i] * JingleBellstempo);
     } 
     
     else 
     {
-      playNote(notes[i], beats[i] * tempo);
+      playNote(JingleBellsnotes[i], JingleBellsbeats[i] * JingleBellstempo);
     }
     
     delay(tempo / 2); 

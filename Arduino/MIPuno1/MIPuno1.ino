@@ -30,10 +30,6 @@
 #define LED2 6
 #define spkr 8
 #define servo 9
-#define mtr1 50
-#define mtr2 51
-#define mtr3 52
-#define mtr4 53
 
 #define trig A0
 #define echo A1
@@ -95,7 +91,7 @@ int jingle_beats[] =
 void setup() 
 {
   Serial.begin(9600);
-  Serial.println("Arduino Due Start");
+  Serial.println("Arduino UNO 1 start");
   
   //Seting up some hardware
   myServo.attach(servo);
@@ -117,20 +113,8 @@ void loop()
   Sounds();
 }
 
-//Method for random movement
-void RandomMove()
-{
-  
-}
-
-//Method for controlled movement
-void ControlMove()
-{
-  
-}
-
-//Method for steering
-void Turn()
+//Method for moving
+void MtrMove()
 {
   
 }
@@ -182,7 +166,7 @@ void SendMood()
 //Method for the making of sounds
 void Sounds()
 { 
-  Sing("");
+  Sing("mario");
 }
 
 //Method for controlling LED batch 1

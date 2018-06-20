@@ -1,4 +1,6 @@
+
 //https://extramaster.net/tools/midiToArduino/
+
 //All methods
 /*
  * RandomMove
@@ -43,7 +45,7 @@ float USdistance;
 int servoValue;
 float lightvalue;
 float THvalue;
-int song = 0;
+String song = "";
 
 //Declaring some hardware
 Servo myServo;
@@ -78,10 +80,22 @@ int underworld_tempo[] =
   18, 18, 6, 6, 6, 6, 6, 6, 18, 18, 18, 18, 18, 18, 10, 10, 10, 10, 10, 10, 3, 3, 3
 };
 
+int jingle_melody[] = 
+{
+  NOTE_e, NOTE_e, NOTE_e, NOTE_e, NOTE_e, NOTE_e, NOTE_e, NOTE_g, NOTE_c, NOTE_d, NOTE_e, 0, 
+  NOTE_f, NOTE_f, NOTE_f, NOTE_f, NOTE_f, NOTE_e, NOTE_e, NOTE_e, NOTE_e, NOTE_d, NOTE_d, NOTE_e, NOTE_d, NOTE_g
+};
+
+int jingle_beats[] = 
+{
+  1, 1, 2, 1, 1, 2, 1, 1, 1, 1, 4, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2
+};
+
 
 void setup() 
 {
   Serial.begin(9600);
+  Serial.println("Arduino Due Start");
   
   //Seting up some hardware
   myServo.attach(servo);
@@ -90,9 +104,10 @@ void setup()
   //Initializing pins
   pinMode(LED1, OUTPUT);
   pinMode(LED2, OUTPUT);
+  pinMode(spkr, OUTPUT);
   pinMode(echo, INPUT);
   pinMode(trig, OUTPUT);
-  pinMode(spkr, OUTPUT);
+  pinMode(LDR, INPUT);
 }
 
 void loop() 
@@ -144,12 +159,15 @@ void ReadLight()
 {
   lightvalue = analogRead(LDR);
 
-  if(lightvalue >= 200)
+  Serial.print("Read LDR at: ");
+  Serial.println(lightvalue);
+
+  if(lightvalue >= 400)
   {
     LED2M(HIGH);
   }
 
-  else if(lightvalue < 200)
+  else if(lightvalue < 400)
   {
     LED2M(LOW);
   }
@@ -163,8 +181,8 @@ void SendMood()
 
 //Method for the making of sounds
 void Sounds()
-{
-  Sing(0);
+{ 
+  Sing("");
 }
 
 //Method for controlling LED batch 1
@@ -185,16 +203,20 @@ void InitWiFi()
   
 }
 
-void Sing(int s) 
+void Sing(String s) 
 {
   song = s;
 
-  if(song == 0)
+  Serial.print("Currently playing song: ");
+  Serial.println(song);
+
+  if(song == "")
   {
+    delay(100);
     return;
   }
   
-  if(song == 1)
+  if(song == "mario")
   {
     int size = sizeof(mario_melody) / sizeof(int);
     
@@ -211,7 +233,7 @@ void Sing(int s)
     }
   }
   
-  if (song == 2) 
+  if (song == "underworld") 
   {
     int size = sizeof(underworld_melody) / sizeof(int);
     
@@ -227,6 +249,23 @@ void Sing(int s)
       Buzz(0, noteDuration);
     }
   }  
+
+  if(song == "jingle")
+  {
+    int size = sizeof(jingle_melody) / sizeof(int);
+    
+    for (int i = 0; i < size; i++) 
+    {
+      int noteDuration = 1000 / jingle_beats[i];
+ 
+      Tone(jingle_melody[i], noteDuration);
+ 
+      int noteDelay = noteDuration * 1.30;
+      delay(noteDelay);
+ 
+      Tone(0, noteDuration);
+    }
+  }
 }
 
 void Buzz(long frequency, long length) 
@@ -241,5 +280,21 @@ void Buzz(long frequency, long length)
     digitalWrite(spkr, LOW); 
     delayMicroseconds(delayValue); 
   }
+}
+
+void Tone(int Freq, int duration)
+{
+    int uSdelay = 1000000 / Freq;
+    int on_time = uSdelay * 0.7;
+    int off_time = uSdelay * 0.3;
+
+    unsigned long ending = millis() + duration;
+    while (millis() < ending) 
+    {
+        digitalWrite(spkr, HIGH);
+        delayMicroseconds(on_time);
+        digitalWrite(spkr, LOW);
+        delayMicroseconds(off_time);
+    }
 }
 

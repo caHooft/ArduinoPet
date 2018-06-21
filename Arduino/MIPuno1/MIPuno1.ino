@@ -106,6 +106,8 @@ void setup()
   pinMode(LED1, OUTPUT);
   pinMode(LED2, OUTPUT);
   pinMode(spkr, OUTPUT);
+  pinMode(trig, OUTPUT);
+  pinMode(echo, INPUT);
   pinMode(LDR, INPUT);
 }
 
@@ -138,7 +140,7 @@ void Neck()
   delay(1000);
   USdistance1 = Distance();
   Serial.print(USdistance1);
-  Serial.println(" cm links");
+  Serial.println(" cm rechts");
   neck.write(90);
   delay(1000);
   USdistance2 = Distance();
@@ -147,8 +149,8 @@ void Neck()
   neck.write(180);
   delay(1000);
   USdistance3 = Distance();
-  Serial.print(USdistance2);
-  Serial.println(" cm rechts");
+  Serial.print(USdistance3);
+  Serial.println(" cm links");
   neck.write(90);
 }
 
@@ -161,9 +163,7 @@ float Distance()
   delayMicroseconds(10);
   digitalWrite(trig, LOW);
   float USvalue = pulseIn(echo, HIGH) / 29 / 2;
-  delay(50);
-  Serial.println("Read US on: ");
-  Serial.println(USvalue);
+  Serial.print("Read US on: ");
   return USvalue;
 }
 

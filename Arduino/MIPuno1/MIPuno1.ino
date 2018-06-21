@@ -113,12 +113,14 @@ void setup()
 
 void loop() 
 {  
-  Serial.println();
   Serial.println("Restart loop");
   Serial.println();
   ReadLight();
+  Serial.println();
   Neck();
+  Serial.println();
   Sounds();
+  Serial.println();
 }
 
 //Method for moving
@@ -136,21 +138,21 @@ void Tail()
 //Method for sweeping the neck
 void Neck()
 {
-  neck.write(0);
+  neck.write(180);
   delay(1000);
   USdistance1 = Distance();
   Serial.print(USdistance1);
-  Serial.println(" cm rechts");
+  Serial.print("cm links, ");
   neck.write(90);
   delay(1000);
   USdistance2 = Distance();
   Serial.print(USdistance2);
-  Serial.println(" cm voor");
-  neck.write(180);
+  Serial.print("cm voor en ");
+  neck.write(0);
   delay(1000);
   USdistance3 = Distance();
   Serial.print(USdistance3);
-  Serial.println(" cm links");
+  Serial.println("cm rechts.");
   neck.write(90);
 }
 
@@ -163,7 +165,6 @@ float Distance()
   delayMicroseconds(10);
   digitalWrite(trig, LOW);
   float USvalue = pulseIn(echo, HIGH) / 29 / 2;
-  Serial.print("Read US on: ");
   return USvalue;
 }
 

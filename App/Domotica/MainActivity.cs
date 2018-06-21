@@ -58,24 +58,15 @@ namespace Domotica
 
     public class MainActivity : Activity
     {
+        Server server = new Server();
         // Variables (components/controls)
         // Controls on GUI
-        ToggleButton AIbutton;
-        ToggleButton lightsToggle;
-        Button buttonConnect;
-        TextView textViewServerConnect;
-        public TextView textViewChangePinStateValue, textViewSensorValue, textViewDebugValue, HumidityValueText, LDRValueText;
-        EditText editTextIPAddress, editTextIPPort;
+        ToggleButton AIbutton, lightsToggle;
+        TextView MIPStatusText, HumidityValueText, LDRValueText;
         Spinner eyesSpinner, musicSpinner;
 
-        Socket socket = null;                       // Socket   
-        Connector connector = null;                 // Connector (simple-mode or threaded-mode)
-        List<Tuple<string, TextView>> commandList = new List<Tuple<string, TextView>>();  // List for commands and response places on UI
-        int listIndex = 0;
-        bool canContinue = true;
-
         private List<KeyValuePair<string, int>> moods;
-        private List<KeyValuePair<string, int>> sounds;
+        private List<KeyValuePair<string, string>> sounds;
 
         protected override void OnCreate(Bundle bundle)
         {
@@ -90,24 +81,22 @@ namespace Domotica
                 new KeyValuePair<string, int>("Scared", 4)
             };
 
-            sounds = new List<KeyValuePair<string, int>>
+            sounds = new List<KeyValuePair<string, string>>
             {
-                new KeyValuePair<string, int>("Mario01", 0),
-                new KeyValuePair<string, int>("Mario02", 1)
+                new KeyValuePair<string, string>("Empty", ""),
+                new KeyValuePair<string, string>("Mario", "mario"),
+                new KeyValuePair<string, string>("Underworld", "underworld")
             };
 
             // Set our view from the "main" layout resource (strings are loaded from Recources -> values -> Strings.xml)
             SetContentView(Resource.Layout.ConnectedApp);
 
             // find and set the controls, so it can be used in the code
-            buttonConnect = FindViewById<Button>(Resource.Id.buttonConnect);
-            textViewServerConnect = FindViewById<TextView>(Resource.Id.textViewServerConnect);
-            editTextIPAddress = FindViewById<EditText>(Resource.Id.editTextIPAddress);
-            editTextIPPort = FindViewById<EditText>(Resource.Id.editTextIPPort);
             eyesSpinner = FindViewById<Spinner>(Resource.Id.EyesDropdown);
             musicSpinner = FindViewById<Spinner>(Resource.Id.MusicDropdown);
             HumidityValueText = FindViewById<TextView>(Resource.Id.HumidityValue);
             LDRValueText = FindViewById<TextView>(Resource.Id.LDRDataValue);
+            MIPStatusText = FindViewById<TextView>(Resource.Id.MIPStatusValue);
             lightsToggle = FindViewById<ToggleButton>(Resource.Id.LightsToggle);
             AIbutton = FindViewById<ToggleButton>(Resource.Id.AIToggle);
 
@@ -146,31 +135,9 @@ namespace Domotica
                 musicSpinner.ItemSelected += (sender, args) => Music_ItemSelected(sender, args);
             }
 
-            UpdateConnectionState(4, "Disconnected");            
-
-            //Add the "Connect" button handler.
-            if (buttonConnect != null)  // if button exists
-            {
-                buttonConnect.Click += (sender, e) =>
-                {
-                    //Validate the user input (IP address and port)
-                    if (CheckValidIpAddress(editTextIPAddress.Text) && CheckValidPort(editTextIPPort.Text))
-                    {
-                        if (connector == null) // -> simple sockets
-                        {
-                            ConnectSocket(editTextIPAddress.Text, editTextIPPort.Text);
-                        }
-                        else // -> threaded sockets
-                        {
-                            //Stop the thread If the Connector thread is already started.
-                            if (connector.CheckStarted()) connector.StopConnector();
-                               connector.StartConnector(editTextIPAddress.Text, editTextIPPort.Text);
-                        }
-                    }
-                    else UpdateConnectionState(3, "Please check IP");
-                };
-            }
+            server.Connect(this); 
         }
+        
 
         private void Mood_ItemSelected(object sender, AdapterView.ItemSelectedEventArgs e)
         {
@@ -180,6 +147,9 @@ namespace Domotica
             string toast = string.Format("Mood  = {0}; Value = {1}",
                 spinner.GetItemAtPosition(e.Position), moods[e.Position].Value);
             Toast.MakeText(this, toast, ToastLength.Long).Show();
+
+            string sendText = "ChangeMood" + moods[e.Position].Value;
+            SendStringToArduino(sendText, MIPStatusText);
         }
 
         private void Music_ItemSelected(object sender, AdapterView.ItemSelectedEventArgs e)
@@ -190,6 +160,9 @@ namespace Domotica
             string toast = string.Format("Music  = {0}; Value = {1}",
                 spinner.GetItemAtPosition(e.Position), sounds[e.Position].Value);
             Toast.MakeText(this, toast, ToastLength.Long).Show();
+
+            string sendText = "ChangeSong" + sounds[e.Position].Value + "]";
+            SendStringToArduino(sendText, MIPStatusText);
         }
 
         public void DisplayHumidityValue(string value)
@@ -207,8 +180,10 @@ namespace Domotica
             ToggleButton toggle = (ToggleButton)sender;
             if(toggle != null)
             {
-              bool lightson = toggle.Checked;
-                Toast.MakeText(this, lightson.ToString(), ToastLength.Long).Show();
+                string sendText = "LightsToggle" + Convert.ToInt32(toggle.Checked);
+
+                SendStringToArduino(sendText, MIPStatusText);
+                Toast.MakeText(this, sendText, ToastLength.Long).Show();
             }
         }
 
@@ -217,156 +192,22 @@ namespace Domotica
             ToggleButton toggle = (ToggleButton)sender;
             if(toggle != null)
             {
-                bool AIon = toggle.Checked;
-                Toast.MakeText(this, AIon.ToString(), ToastLength.Long).Show();
+                string sendText = "AIToggle" + Convert.ToInt32(toggle.Checked);
+
+                SendStringToArduino(sendText, MIPStatusText);
+                Toast.MakeText(this, sendText, ToastLength.Long).Show();
             }
         }
-
-
 
         public void SendStringToArduino(string cmd, TextView text)
         {
-            ResetCanContinue();
-            if (connector == null) // -> simple sockets
-            {
-                socket.Send(Encoding.ASCII.GetBytes(cmd));                 // Send toggle-command to the Arduino
-            }
-            else // -> threaded sockets
-            {
-                if (connector.CheckStarted()) connector.SendMessage(cmd);  // Send toggle-command to the Arduino
-            }
-
-            byte[] bytes = new byte[4096]; // response is always 4 bytes
-            int bytesRec = socket.Receive(bytes);
-            string result = "-";
+            if (!server.Send(cmd)) server.Connect(this);
             
-            result = Encoding.ASCII.GetString(bytes, 0, bytesRec);
-            
-            while(!result.Contains("1")&& !result.Contains("0"))
+            /*string data = server.Receive();
+            if(data == "-")
             {
-                string getStatus = "GetRFStatus";
-                getStatus += cmd[cmd.Length-1];
-                socket.Send(Encoding.ASCII.GetBytes(getStatus));
-                bytesRec = socket.Receive(bytes);
-                result = Encoding.ASCII.GetString(bytes, 0, bytesRec);
-
-                Console.WriteLine(result);
-            }
-
-            if (result.Contains("1")){
-                result = "ON";
-            }
-            else
-            {
-                result = "OFF";
-            }
-            text.Text = result;
-        }
-        async void ResetCanContinue()
-        {
-            canContinue = false;
-            await Task.Delay(500);
-            canContinue = true;//start your activity here
-        }
-
-
-        //Send command to server and wait for response (blocking)
-        //Method should only be called when socket existst
-        public string ExecuteCommand(string cmd)
-        {
-            byte[] bytes = new byte[4096]; // response is always 4 bytes
-            int bytesRec = socket.Receive(bytes);
-            string result = "";
-            
-            if (socket != null)
-            {
-                //Send command to server
-                socket.Send(Encoding.ASCII.GetBytes(cmd));
-                result = Encoding.ASCII.GetString(bytes, 0, bytesRec);
-            }
-            return result;
-        }
-
-        //Update connection state label (GUI).
-        public void UpdateConnectionState(int state, string text)
-        {
-            // connectButton
-            string butConText = "Connect";  // default text
-            bool butConEnabled = true;      // default state
-            Color color = Color.Red;        // default color
-            // pinButton
-            bool butPinEnabled = false;     // default state 
-
-            //Set "Connect" button label according to connection state.
-            if (state == 1)
-            {
-                butConText = "Please wait";
-                color = Color.Orange;
-                butConEnabled = false;
-            } else
-            if (state == 2)
-            {
-                butConText = "Disconnect";
-                color = Color.Green;
-                butPinEnabled = true;
-            }
-            //Edit the control's properties on the UI thread
-            RunOnUiThread(() =>
-            {
-                //textViewServerConnect.Text = text;
-                if (butConText != null)  // text existst
-                {
-                    //buttonConnect.Text = butConText;
-                    //textViewServerConnect.SetTextColor(color);
-                    //buttonConnect.Enabled = butConEnabled;
-                }
-            });
-        }
-
-        //Update GUI based on Arduino response
-        public void UpdateGUI(string result, TextView textview)
-        {
-            RunOnUiThread(() =>
-            {
-                if (!canContinue) return;
-                if (result.Contains("OFF")) textview.SetTextColor(Color.Red);
-                else if (result.Contains("ON")) textview.SetTextColor(Color.Green);
-                else textview.SetTextColor(Color.White);  
-                textview.Text = result;
-            });
-        }
-
-        // Connect to socket ip/prt (simple sockets)
-        public void ConnectSocket(string ip, string prt)
-        {
-            RunOnUiThread(() =>
-            {
-                if (socket == null)                                       // create new socket
-                {
-                    UpdateConnectionState(1, "Connecting...");
-                    try  // to connect to the server (Arduino).
-                    {
-                        socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-                        socket.Connect(new IPEndPoint(IPAddress.Parse(ip), Convert.ToInt32(prt)));
-                        if (socket.Connected)
-                        {
-                            UpdateConnectionState(2, "Connected");
-                        }
-                    } catch (Exception exception) {
-                        if (socket != null)
-                        {
-                            socket.Close();
-                            socket = null;
-                        }
-                        UpdateConnectionState(4, exception.Message);
-                    }
-	            }
-                else // disconnect socket
-                {
-                    socket.Close(); socket = null;
-                    UpdateConnectionState(4, "Disconnected");
-                }
-            });
+                Toast.MakeText(this, "No Info Received", ToastLength.Short);
+            }*/
         }
 
         //Close the connection (stop the threads) if the application stops.
@@ -374,13 +215,7 @@ namespace Domotica
         {
             base.OnStop();
 
-            if (connector != null)
-            {
-                if (connector.CheckStarted())
-                {
-                    connector.StopConnector();
-                }
-            }
+            server.Stop();
         }
 
         //Close the connection (stop the threads) if the application is destroyed.
@@ -388,13 +223,7 @@ namespace Domotica
         {
             base.OnDestroy();
 
-            if (connector != null)
-            {
-                if (connector.CheckStarted())
-                {
-                    connector.StopConnector();
-                }
-            }
+            server.Stop();
         }
 
         //Prepare the Screen's standard options menu to be displayed.
@@ -405,57 +234,6 @@ namespace Domotica
 
             MenuInflater.Inflate(Resource.Menu.menu, menu);
             return base.OnPrepareOptionsMenu(menu);
-        }
-
-        //Executes an action when a menu button is pressed.
-        public override bool OnOptionsItemSelected(IMenuItem item)
-        {
-            switch (item.ItemId)
-            {
-                case 0:
-                    //Force quit the application.
-                    System.Environment.Exit(0);
-                    return true;
-                case 1:
-
-                    //Stop threads forcibly (for debugging only).
-                    if (connector != null)
-                    {
-                        if (connector.CheckStarted()) connector.Abort();
-                    }
-                    return true;
-            }
-            return base.OnOptionsItemSelected(item);
-        }
-
-        //Check if the entered IP address is valid.
-        private bool CheckValidIpAddress(string ip)
-        {
-            if (ip != "") {
-                //Check user input against regex (check if IP address is not empty).
-                Regex regex = new Regex("\\b((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\\.|$)){4}\\b");
-                Match match = regex.Match(ip);
-                return match.Success;
-            } else return false;
-        }
-
-        //Check if the entered port is valid.
-        private bool CheckValidPort(string port)
-        {
-            //Check if a value is entered.
-            if (port != "")
-            {
-                Regex regex = new Regex("[0-9]+");
-                Match match = regex.Match(port);
-
-                if (match.Success)
-                {
-                    int portAsInteger = Int32.Parse(port);
-                    //Check if port is in range.
-                    return ((portAsInteger >= 0) && (portAsInteger <= 65535));
-                }
-                else return false;
-            } else return false;
         }
     }
 }

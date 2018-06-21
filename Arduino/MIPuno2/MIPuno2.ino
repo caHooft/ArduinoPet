@@ -9,6 +9,7 @@
  */
 
 //Including libraries
+#include <Wire.h>
 #include <LiquidCrystal.h>
 
 //Declaring pins
@@ -19,6 +20,9 @@
 #define LCDd6 6
 #define LCDd7 7
 
+//Declaring some variables
+int x = 0;
+
 //Declaring some hardware
 LiquidCrystal lcd(LCDrs, LCDen, LCDd4, LCDd5, LCDd6, LCDd7);
 
@@ -26,6 +30,8 @@ void setup()
 {
   Serial.begin(9600);
   Serial.println("Arduino UNO 2 start");
+  Wire.begin(9);
+  Wire.onReceive(ReceiveEvent);
   
   //Seting up some hardware
   lcd.begin(16, 2);
@@ -38,7 +44,16 @@ void setup()
 
 void loop() 
 {
+  if(x == '')
+  {
+    
+  }
+}
 
+//Method for receiving commands
+void ReceiveEvent(int bytes)
+{
+  x = Wire.read
 }
 
 //Method for random movement

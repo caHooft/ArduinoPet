@@ -113,14 +113,31 @@ void setup()
 
 void loop() 
 {  
+  Serial.println("-------------------------------------------------");
+  Serial.println();
   Serial.println("Restart loop");
   Serial.println();
   ReadLight();
   Serial.println();
   Neck();
   Serial.println();
-  Sounds();
+  Sounds("");
   Serial.println();
+}
+
+//Method for rerceiving lient data
+void ReceiveClientData(String cmd)
+{
+  Serial.print("Receiving data from app");
+  
+  int LEDvaluecmd = cmd.indexOf("LightsToggle");
+
+  if(LEDvaluecmd > 0) 
+  {
+     Serial.print("Set lights");
+     LEDvalue = cmd[LEDvaluecmd +1]
+     LED1M(LEDvalue);
+  }
 }
 
 //Method for moving
@@ -201,9 +218,19 @@ void SendMood()
 }
 
 //Method for controlling LED batch 1
-void LED1M()
+void LED1M(int LEDvalue)
 {
-  
+  if(LEDvalue = 0)
+  {
+    digitalWrite(LED1, LOW);
+    Serial.println("off");
+  }
+
+  if(LEDvalue = 1)
+  {
+    digitalWrite(LED1, HIGH);
+    Serial.println("on");
+  }
 }
 
 //Method for controlling LED batch 2
@@ -219,21 +246,19 @@ void InitWiFi()
 }
 
 //Method for the making of sounds
-void Sounds()
+void Sounds(String song)
 { 
-  Sing("");
+  Sing(song);
 }
 
-void Sing(String s) 
+void Sing(String song) 
 {
-  song = s;
-
   Serial.print("Currently playing song: ");
   Serial.println(song);
 
   if(song == "")
   {
-    delay(100);
+    delay(1000);
     return;
   }
   

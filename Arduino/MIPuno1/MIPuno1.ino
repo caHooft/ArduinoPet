@@ -32,13 +32,14 @@
 #define spkr 8
 #define tailpin 9
 
-#define ustpin A0
-#define usepin A1
+#define trig A0
+#define echo A1
 #define LDR A2
 
 //Declaring some variables
-float USduration;
-float USdistance;
+float USdistance1;
+float USdistance2;
+float USdistance3;
 int servoValue;
 float lightvalue;
 float THvalue;
@@ -110,6 +111,9 @@ void setup()
 
 void loop() 
 {  
+  Serial.println();
+  Serial.println("Restart loop");
+  Serial.println();
   ReadLight();
   Neck();
   Sounds();
@@ -132,28 +136,35 @@ void Neck()
 {
   neck.write(0);
   delay(1000);
-  Serial.print(Distance());
-  Serial.print("cm links, ");
+  USdistance1 = Distance();
+  Serial.print(USdistance1);
+  Serial.println(" cm links");
   neck.write(90);
   delay(1000);
-  Serial.print(Distance());
-  Serial.print("cm voor en ");
+  USdistance2 = Distance();
+  Serial.print(USdistance2);
+  Serial.println(" cm voor");
   neck.write(180);
   delay(1000);
-  Serial.print(Distance());
-  Serial.println("cm rechts.");
+  USdistance3 = Distance();
+  Serial.print(USdistance2);
+  Serial.println(" cm rechts");
   neck.write(90);
 }
 
 //Method for reading ultra sonic sensor and avoiding collisions
 float Distance()
 {
-  digitalWrite(ustpin, LOW);
+  digitalWrite(trig, LOW);
   delayMicroseconds(2);
-  digitalWrite(ustpin, HIGH);
+  digitalWrite(trig, HIGH);
   delayMicroseconds(10);
-  digitalWrite(ustpin, LOW);
-  return pulseIn(usepin, HIGH) / 29 / 2;
+  digitalWrite(trig, LOW);
+  float USvalue = pulseIn(echo, HIGH) / 29 / 2;
+  delay(50);
+  Serial.println("Read US on: ");
+  Serial.println(USvalue);
+  return USvalue;
 }
 
 
@@ -209,7 +220,7 @@ void InitWiFi()
 //Method for the making of sounds
 void Sounds()
 { 
-  Sing("underworld");
+  Sing("");
 }
 
 void Sing(String s) 

@@ -95,7 +95,7 @@ int jingle_beats[] =
 
 void setup() 
 {
-  Sire.begin();
+  Wire.begin();
   Serial.begin(9600);
   Serial.println("Arduino UNO 1 start");
   
@@ -112,6 +112,16 @@ void setup()
   pinMode(trig, OUTPUT);
   pinMode(echo, INPUT);
   pinMode(LDR, INPUT);
+
+  //Checking wire connection
+  LED3M(1);
+  delay(200);
+  LED3M(0);
+  delay(200);
+  LED3M(1);
+  delay(200);
+  LED3M(0);
+  delay(200);
 }
 
 void loop() 
@@ -137,8 +147,10 @@ void ReceiveClientData(String cmd)
 
   if(LEDvaluecmd > 0) 
   {
-     Serial.print("Set lights");
-     LEDvalue = cmd[LEDvaluecmd +1]
+     int LEDvalue = cmd[LEDvaluecmd +1];
+     
+     Serial.print("Set lights ");
+     
      LED1M(LEDvalue);
   }
 }
@@ -225,18 +237,15 @@ void LED1M(int LEDvalue)
 {
   if(LEDvalue = 0)
   {
-    Wire.beginTransmission(9);
-    Wire.write(0);
-    Serial.println
-    Wire.endTransmission();
+    Serial.println("LOW");
+    digitalWrite(LED1, LOW);
   }
 
   if(LEDvalue = 1)
   {
-    Wire.beginTransmission(9);
-    Wire.write(1);
-    Serial.println
-    Wire.endTransmission();
+    Serial.println("HIGH");
+    
+    digitalWrite(LED1, HIGH);
   }
 }
 
@@ -246,9 +255,21 @@ void LED2M(byte b)
   digitalWrite(LED2, b);
 }
 
-void LED3M()
+void LED3M(int i)
 {
-  
+  if(i == 0)
+  {
+    Wire.beginTransmission(9);
+    Wire.write(0);
+    Wire.endTransmission();
+  }
+
+  if(i == 1)
+  {
+    Wire.beginTransmission(9);
+    Wire.write(1);
+    Wire.endTransmission();
+  }
 }
 
 //Method for activating WiFi Shield

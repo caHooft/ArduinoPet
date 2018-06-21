@@ -6,14 +6,15 @@
  * MtrMove
  * Tail
  * Neck
+ * Distance
  * ReadUS
  * ReadTH
  * ReadLight
  * SendMoods
- * Sounds
  * LED1M
  * LED2M
  * InitWifi
+ * Sounds
  * Sing
  * Buzz
  */
@@ -29,7 +30,7 @@
 #define LED1 5
 #define LED2 6
 #define spkr 8
-#define tail 9
+#define tailpin 9
 
 #define uspin A0
 #define LDR A2
@@ -43,7 +44,8 @@ float THvalue;
 String song = "";
 
 //Declaring some hardware
-Servo myServo;
+Servo neck;
+Servo tail;
 
 //Declaring song arrays
 int mario_melody[] = 
@@ -93,24 +95,22 @@ void setup()
   Serial.println("Arduino UNO 1 start");
   
   //Seting up some hardware
-  myServo.attach(servo);
-  myServo.write(97);
+  neck.attach(neckpin);
+  neck.write(90);
+  tail.attach(tailpin);
+  tail.write(97);
 
   //Initializing pins
   pinMode(LED1, OUTPUT);
   pinMode(LED2, OUTPUT);
   pinMode(spkr, OUTPUT);
   pinMode(LDR, INPUT);
-
-  neck.attach(neckpin);
 }
 
 void loop() 
-{
-  Neck();
-  
+{  
   ReadLight();
-  
+  Neck();
   Sounds();
 }
 
@@ -189,12 +189,6 @@ void SendMood()
   
 }
 
-//Method for the making of sounds
-void Sounds()
-{ 
-  Sing("mario");
-}
-
 //Method for controlling LED batch 1
 void LED1M()
 {
@@ -211,6 +205,12 @@ void LED2M(byte b)
 void InitWiFi()
 {
   
+}
+
+//Method for the making of sounds
+void Sounds()
+{ 
+  Sing("underworld");
 }
 
 void Sing(String s) 

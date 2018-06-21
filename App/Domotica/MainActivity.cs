@@ -60,9 +60,11 @@ namespace Domotica
     {
         // Variables (components/controls)
         // Controls on GUI
+        ToggleButton AIbutton;
+        ToggleButton lightsToggle;
         Button buttonConnect;
         TextView textViewServerConnect;
-        public TextView textViewChangePinStateValue, textViewSensorValue, textViewDebugValue, textViewRF0, textViewRF1, textViewRF2;
+        public TextView textViewChangePinStateValue, textViewSensorValue, textViewDebugValue, HumidityValueText, LDRValueText;
         EditText editTextIPAddress, editTextIPPort;
         Spinner eyesSpinner, musicSpinner;
 
@@ -86,7 +88,19 @@ namespace Domotica
             editTextIPPort = FindViewById<EditText>(Resource.Id.editTextIPPort);
             eyesSpinner = FindViewById<Spinner>(Resource.Id.EyesDropdown);
             musicSpinner = FindViewById<Spinner>(Resource.Id.MusicDropdown);
+            HumidityValueText = FindViewById<TextView>(Resource.Id.HumidityValue);
+            LDRValueText = FindViewById<TextView>(Resource.Id.LDRDataValue);
+            lightsToggle = FindViewById<ToggleButton>(Resource.Id.LightsToggle);
+            AIbutton = FindViewById<ToggleButton>(Resource.Id.AIToggle);
 
+            if(AIbutton != null)
+            {
+                AIbutton.Click += (o, e) => OnAIToggle(o, e);
+            }
+            if(lightsToggle != null)
+            {
+                lightsToggle.Click += (o, e) => OnLightsToggle(o, e);
+            }
             if (eyesSpinner != null)
             {
                 var adapter = ArrayAdapter.CreateFromResource(this, Resource.Array.eyes_values, Android.Resource.Layout.SimpleSpinnerItem);
@@ -125,6 +139,38 @@ namespace Domotica
                 };
             }
         }
+
+        public void DisplayHumidityValue(string value)
+        {
+            HumidityValueText.Text = value;
+        }
+
+        public void DisplayLDRValue(string value)
+        {
+            LDRValueText.Text = value;
+        }
+
+        private void OnLightsToggle(object sender,  EventArgs args)
+        {
+            ToggleButton toggle = (ToggleButton)sender;
+            if(toggle != null)
+            {
+              bool lightson = toggle.Checked;
+                Toast.MakeText(this, lightson.ToString(), ToastLength.Long).Show();
+            }
+        }
+
+        private void OnAIToggle(object sender, EventArgs args)
+        {
+            ToggleButton toggle = (ToggleButton)sender;
+            if(toggle != null)
+            {
+                bool AIon = toggle.Checked;
+                Toast.MakeText(this, AIon.ToString(), ToastLength.Long).Show();
+            }
+        }
+
+
 
         public void SendStringToArduino(string cmd, TextView text)
         {

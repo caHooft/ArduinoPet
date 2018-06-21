@@ -32,7 +32,8 @@
 #define spkr 8
 #define tailpin 9
 
-#define uspin A0
+#define ustpin A0
+#define usepin A1
 #define LDR A2
 
 //Declaring some variables
@@ -147,14 +148,12 @@ void Neck()
 //Method for reading ultra sonic sensor and avoiding collisions
 float Distance()
 {
-  pinMode(uspin, OUTPUT);
-  digitalWrite(uspin, LOW);
+  digitalWrite(ustpin, LOW);
   delayMicroseconds(2);
-  digitalWrite(uspin, HIGH);
+  digitalWrite(ustpin, HIGH);
   delayMicroseconds(10);
-  digitalWrite(uspin, LOW);
-  pinMode(uspin, INPUT);
-  return pulseIn(uspin, HIGH) / 29 / 2;
+  digitalWrite(ustpin, LOW);
+  return pulseIn(usepin, HIGH) / 29 / 2;
 }
 
 

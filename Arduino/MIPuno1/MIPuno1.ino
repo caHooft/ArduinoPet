@@ -20,6 +20,7 @@
  */
 
 //Including libraries
+#include <Wire.h>
 #include <Servo.h>
 #include "pitches.h"
 
@@ -37,6 +38,7 @@
 #define LDR A2
 
 //Declaring some variables
+int x = 0;
 float USdistance1;
 float USdistance2;
 float USdistance3;
@@ -93,6 +95,7 @@ int jingle_beats[] =
 
 void setup() 
 {
+  Sire.begin();
   Serial.begin(9600);
   Serial.println("Arduino UNO 1 start");
   
@@ -222,14 +225,18 @@ void LED1M(int LEDvalue)
 {
   if(LEDvalue = 0)
   {
-    digitalWrite(LED1, LOW);
-    Serial.println("off");
+    Wire.beginTransmission(9);
+    Wire.write(0);
+    Serial.println
+    Wire.endTransmission();
   }
 
   if(LEDvalue = 1)
   {
-    digitalWrite(LED1, HIGH);
-    Serial.println("on");
+    Wire.beginTransmission(9);
+    Wire.write(1);
+    Serial.println
+    Wire.endTransmission();
   }
 }
 
@@ -237,6 +244,11 @@ void LED1M(int LEDvalue)
 void LED2M(byte b)
 {
   digitalWrite(LED2, b);
+}
+
+void LED3M()
+{
+  
 }
 
 //Method for activating WiFi Shield
@@ -258,7 +270,7 @@ void Sing(String song)
 
   if(song == "")
   {
-    delay(1000);
+    delay(1500);
     return;
   }
   

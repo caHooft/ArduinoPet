@@ -19,9 +19,10 @@
 #define LCDd5 5
 #define LCDd6 6
 #define LCDd7 7
+#define LED 13
 
 //Declaring some variables
-int x = 0;
+int x;
 
 //Declaring some hardware
 LiquidCrystal lcd(LCDrs, LCDen, LCDd4, LCDd5, LCDd6, LCDd7);
@@ -39,21 +40,31 @@ void setup()
   lcd.print("     __  __     ");
 
   //Initializing pins
-  
+  pinMode(13, OUTPUT);
 }
 
 void loop() 
 {
-  if(x == '')
+  Serial.println("-------------------------------------------------");
+  Serial.println();
+  Serial.println("Restart loop");
+  Serial.println();
+  
+  if(x == '0') 
   {
-    
+    LEDM(LOW);
+  }
+
+  if(x == '1') 
+  {
+    LEDM(HIGH);
   }
 }
 
 //Method for receiving commands
 void ReceiveEvent(int bytes)
 {
-  x = Wire.read
+  x = Wire.read();
 }
 
 //Method for random movement
@@ -85,3 +96,11 @@ void ChangeMood()
 {
   
 }
+
+void LEDM(byte b)
+{
+  digitalWrite(LED, b);
+  Serial.print("LED at: ");
+  Serial.println(b);
+}
+

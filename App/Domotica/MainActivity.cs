@@ -74,9 +74,27 @@ namespace Domotica
         int listIndex = 0;
         bool canContinue = true;
 
+        private List<KeyValuePair<string, int>> moods;
+        private List<KeyValuePair<string, int>> sounds;
+
         protected override void OnCreate(Bundle bundle)
         {
             base.OnCreate(bundle);
+
+            moods = new List<KeyValuePair<string, int>>
+            {
+                new KeyValuePair<string, int>("Happy", 0),
+                new KeyValuePair<string, int>("Sad", 1),
+                new KeyValuePair<string, int>("Angry", 2),
+                new KeyValuePair<string, int>("Disgusted", 3),
+                new KeyValuePair<string, int>("Scared", 4)
+            };
+
+            sounds = new List<KeyValuePair<string, int>>
+            {
+                new KeyValuePair<string, int>("Mario01", 0),
+                new KeyValuePair<string, int>("Mario02", 1)
+            };
 
             // Set our view from the "main" layout resource (strings are loaded from Recources -> values -> Strings.xml)
             SetContentView(Resource.Layout.ConnectedApp);
@@ -101,17 +119,31 @@ namespace Domotica
             {
                 lightsToggle.Click += (o, e) => OnLightsToggle(o, e);
             }
+
             if (eyesSpinner != null)
             {
-                var adapter = ArrayAdapter.CreateFromResource(this, Resource.Array.eyes_values, Android.Resource.Layout.SimpleSpinnerItem);
+                List<string> moodNames = new List<string>();
+                foreach (var item in moods)
+                    moodNames.Add(item.Key);
+
+                var adapter = new ArrayAdapter<string>(this, Android.Resource.Layout.SimpleSpinnerItem, moodNames);
                 adapter.SetDropDownViewResource(Android.Resource.Layout.SimpleSpinnerDropDownItem);
                 eyesSpinner.Adapter = adapter;
+
+                eyesSpinner.ItemSelected += (sender, args) => Mood_ItemSelected(sender, args);
+
             }
             if (musicSpinner != null)
             {
-                var adapter = ArrayAdapter.CreateFromResource(this, Resource.Array.music_values, Android.Resource.Layout.SimpleSpinnerItem);
+                List<string> soundNames = new List<string>();
+                foreach (var item in sounds)
+                    soundNames.Add(item.Key);
+
+                var adapter = new ArrayAdapter<string>(this, Android.Resource.Layout.SimpleSpinnerItem, soundNames);
                 adapter.SetDropDownViewResource(Android.Resource.Layout.SimpleSpinnerDropDownItem);
                 musicSpinner.Adapter = adapter;
+
+                musicSpinner.ItemSelected += (sender, args) => Music_ItemSelected(sender, args);
             }
 
             UpdateConnectionState(4, "Disconnected");            
@@ -138,6 +170,26 @@ namespace Domotica
                     else UpdateConnectionState(3, "Please check IP");
                 };
             }
+        }
+
+        private void Mood_ItemSelected(object sender, AdapterView.ItemSelectedEventArgs e)
+        {
+            Spinner spinner = (Spinner)sender;
+            string name = spinner.GetItemAtPosition(e.Position).ToString();
+
+            string toast = string.Format("Mood  = {0}; Value = {1}",
+                spinner.GetItemAtPosition(e.Position), moods[e.Position].Value);
+            Toast.MakeText(this, toast, ToastLength.Long).Show();
+        }
+
+        private void Music_ItemSelected(object sender, AdapterView.ItemSelectedEventArgs e)
+        {
+            Spinner spinner = (Spinner)sender;
+            string name = spinner.GetItemAtPosition(e.Position).ToString();
+
+            string toast = string.Format("Music  = {0}; Value = {1}",
+                spinner.GetItemAtPosition(e.Position), sounds[e.Position].Value);
+            Toast.MakeText(this, toast, ToastLength.Long).Show();
         }
 
         public void DisplayHumidityValue(string value)

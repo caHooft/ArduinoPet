@@ -27,16 +27,4 @@
   <string name="move_right">></string>
   <string name="exit">Exit</string>
   <string name="abort">Abort</string>
-  <string-array name ="eyes_values">
-    <item>swek</item>
-    <item>je moeder</item>
-    <item>klaplong</item>
-    <item>boi</item>
-  </string-array>  
-  <string-array name ="music_values">
-    <item>swek</item>
-    <item>je moeder</item>
-    <item>klaplong</item>
-    <item>boi</item>
-  </string-array>
 </resources>

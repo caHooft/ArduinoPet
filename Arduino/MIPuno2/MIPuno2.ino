@@ -18,10 +18,6 @@
 #define LCDd5 5
 #define LCDd6 6
 #define LCDd7 7
-#define mtr1 8
-#define mtr2 9
-#define mtr3 10
-#define mtr4 11
 
 //Declaring some hardware
 LiquidCrystal lcd(LCDrs, LCDen, LCDd4, LCDd5, LCDd6, LCDd7);

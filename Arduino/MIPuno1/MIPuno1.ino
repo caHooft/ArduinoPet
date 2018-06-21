@@ -3,10 +3,9 @@
 
 //All methods
 /*
- * RandomMove
- * ControlMove
- * Turn
+ * MtrMove
  * Tail
+ * Neck
  * ReadUS
  * ReadTH
  * ReadLight
@@ -25,11 +24,12 @@
 
 //Declaring pins
 //Niet gebruiken ivm WiFi shield: 4, 7, 10, 11, 12, 13
-#define TH 3
+#define TH 2
+#define neck 3
 #define LED1 5
 #define LED2 6
 #define spkr 8
-#define servo 9
+#define tail 9
 
 #define trig A0
 #define echo A1
@@ -119,8 +119,14 @@ void MtrMove()
   
 }
 
-//Method for tail movement
+//Method for sweeping the tail
 void Tail()
+{
+  
+}
+
+//Method for sweeping the neck
+void Neck()
 {
   
 }

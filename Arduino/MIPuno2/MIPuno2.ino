@@ -29,10 +29,9 @@ LiquidCrystal lcd(LCDrs, LCDen, LCDd4, LCDd5, LCDd6, LCDd7);
 
 void setup() 
 {
+  Wire.begin(9);
   Serial.begin(9600);
   Serial.println("Arduino UNO 2 start");
-  Wire.begin(9);
-  Wire.onReceive(ReceiveEvent);
   
   //Seting up some hardware
   lcd.begin(16, 2);
@@ -40,7 +39,7 @@ void setup()
   lcd.print("     __  __     ");
 
   //Initializing pins
-  pinMode(13, OUTPUT);
+  pinMode(LED, OUTPUT);
 }
 
 void loop() 
@@ -49,13 +48,15 @@ void loop()
   Serial.println();
   Serial.println("Restart loop");
   Serial.println();
+
+  Wire.onReceive(ReceiveEvent);
   
-  if(x == '0') 
+  if(x == 0) 
   {
     LEDM(LOW);
   }
 
-  if(x == '1') 
+  if(x == 1) 
   {
     LEDM(HIGH);
   }

@@ -25,14 +25,13 @@
 //Declaring pins
 //Niet gebruiken ivm WiFi shield: 4, 7, 10, 11, 12, 13
 #define TH 2
-#define neck 3
+#define neckpin 3
 #define LED1 5
 #define LED2 6
 #define spkr 8
 #define tail 9
 
-#define trig A0
-#define echo A1
+#define uspin A0
 #define LDR A2
 
 //Declaring some variables
@@ -101,13 +100,15 @@ void setup()
   pinMode(LED1, OUTPUT);
   pinMode(LED2, OUTPUT);
   pinMode(spkr, OUTPUT);
-  pinMode(echo, INPUT);
-  pinMode(trig, OUTPUT);
   pinMode(LDR, INPUT);
+
+  neck.attach(neckpin);
 }
 
 void loop() 
 {
+  Neck();
+  
   ReadLight();
   
   Sounds();
@@ -128,13 +129,32 @@ void Tail()
 //Method for sweeping the neck
 void Neck()
 {
-  
+  neck.write(0);
+  delay(1000);
+  Serial.print(Distance());
+  Serial.print("cm links, ");
+  neck.write(90);
+  delay(1000);
+  Serial.print(Distance());
+  Serial.print("cm voor en ");
+  neck.write(180);
+  delay(1000);
+  Serial.print(Distance());
+  Serial.println("cm rechts.");
+  neck.write(90);
 }
 
 //Method for reading ultra sonic sensor and avoiding collisions
-void ReadUSonic()
+float Distance()
 {
-  
+  pinMode(uspin, OUTPUT);
+  digitalWrite(uspin, LOW);
+  delayMicroseconds(2);
+  digitalWrite(uspin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(uspin, LOW);
+  pinMode(uspin, INPUT);
+  return pulseIn(uspin, HIGH) / 29 / 2;
 }
 
 

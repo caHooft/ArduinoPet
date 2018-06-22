@@ -22,7 +22,11 @@
 //Including libraries
 #include <Wire.h>
 #include <Servo.h>
+#include <dht.h>
 #include "pitches.h"
+
+
+
 
 //Declaring pins
 //Niet gebruiken ivm WiFi shield: 4, 7, 10, 11, 12, 13
@@ -45,10 +49,14 @@ int servoValue;
 float lightvalue;
 float THvalue;
 String song = "";
+int THtemp;
+int THhumid;
+
 
 //Declaring some hardware
 Servo neck;
 Servo tail;
+dht DHT;
 
 //Declaring song arrays
 int mario_melody[] = 
@@ -111,6 +119,7 @@ void setup()
   pinMode(trig, OUTPUT);
   pinMode(echo, INPUT);
   pinMode(LDR, INPUT);
+  pinMode(TH, INPUT);
 
   //Checking wire connection
   LED3M(1);
@@ -233,7 +242,14 @@ float Distance()
 //Method for measuring temperature & humidity
 void ReadTH()
 {
-  
+  THvalue = DHT.read11(TH);
+  Serial.print("Temperature = ");
+  THtemp = DHT.temperature;
+  Serial.println(THtemp);
+  Serial.print("Humidity = ");
+  THhumid = DHT.humidity;
+  Serial.println(THhumid);
+  delay(1000);
 }
 
 //Method for reading LDR and turning on/of LEDs 

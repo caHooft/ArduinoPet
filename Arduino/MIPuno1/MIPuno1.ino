@@ -131,6 +131,8 @@ void loop()
   Serial.println();
   ReadLight();
   Serial.println();
+  ReadTH();
+  Serial.println();
   Neck();
   Serial.println();
   Sounds("");

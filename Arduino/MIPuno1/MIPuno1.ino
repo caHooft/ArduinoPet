@@ -20,13 +20,14 @@
  */
 
 //Including libraries
+
+#include <ESP8266WiFi.h>
+#include <WiFiClient.h>
+#include <ESP8266WebServer.h>
 #include <Wire.h>
 #include <Servo.h>
 #include <dht.h>
 #include "pitches.h"
-
-
-
 
 //Declaring pins
 //Niet gebruiken ivm WiFi shield: 4, 7, 10, 11, 12, 13
@@ -42,18 +43,20 @@
 #define LDR A2
 
 //Declaring some variables
+const char* ssid = "jessid";
+const char* password = "12345678";
 float USdistance1;
 float USdistance2;
 float USdistance3;
 int servoValue;
 float lightvalue;
 float THvalue;
-String song = "";
 int THtemp;
 int THhumid;
-
+String song = "mario";
 
 //Declaring some hardware
+WiFiServer server(80);
 Servo neck;
 Servo tail;
 dht DHT;
@@ -105,12 +108,23 @@ void setup()
   Wire.begin();
   Serial.begin(9600);
   Serial.println("Arduino UNO 1 start");
+  WiFi.begin(ssid, password);
+  Serial.printf("Connecting to %s ", ssid);
+
+  while (WiFi.status() != WL_CONNECTED)
+  {
+    delay(500);
+    Serial.print(".");
+  }
+  
+  Serial.println(" connected");
   
   //Seting up some hardware
+  server.begin();
   neck.attach(neckpin);
   neck.write(90);
   tail.attach(tailpin);
-  tail.write(97);
+  tail.write(90);
 
   //Initializing pins
   pinMode(LED1, OUTPUT);
@@ -138,13 +152,18 @@ void loop()
   Serial.println();
   Serial.println("Restart loop");
   Serial.println();
+
+  InitWiFi();
+  
   ReadLight();
   Serial.println();
   ReadTH();
   Serial.println();
   Neck();
   Serial.println();
-  Sounds("");
+  Tail();
+  Serial.println();
+  Sounds(song);
   Serial.println();
 }
 
@@ -156,6 +175,7 @@ void ReceiveClientData(String cmd)
   int LEDvaluecmd = cmd.indexOf("LightsToggle");
   int mtrvaluecmd = cmd.indexOf("MotorBool");
   int mtrdireccmd = cmd.indexOf("MotorCommand");
+  int choosesongcmd = cmd.indexOf("ChooseSong");
 
   if(LEDvaluecmd > 0) 
   {
@@ -168,13 +188,13 @@ void ReceiveClientData(String cmd)
 
   if(mtrvaluecmd > 0)
   {
-    bool mtrbool = cmd[mtrvaluecmd + 1];
+    int mtrbool = cmd[mtrvaluecmd + 1];
 
     if(!mtrbool)
     {
       if(mtrdireccmd > 0)
       {
-        int mtrdirec = cmd[mtrdirec +1];
+        int mtrdirec = cmd[mtrdireccmd + 1];
 
         Serial.print("Send motor command");  
 
@@ -189,7 +209,17 @@ void ReceiveClientData(String cmd)
       MtrSend(2);
     }
   }
-}
+/*
+  if(choosesongcmd > 0)
+  {
+    String choosesong = cmd[choosesongcmd + 1];
+
+    Serial.print("Set song to: ");
+    Serial.print(choosesong);
+
+    Sounds(choosesong);
+  }
+*/}
 
 //Method for moving
 void MtrSend(int i)
@@ -202,7 +232,11 @@ void MtrSend(int i)
 //Method for sweeping the tail
 void Tail()
 {
-  
+  tail.write(180);
+  delay(200);
+  tail.write(0);
+  delay(400);
+  tail.write(90);
 }
 
 //Method for sweeping the neck
@@ -243,13 +277,12 @@ float Distance()
 void ReadTH()
 {
   THvalue = DHT.read11(TH);
-  Serial.print("Temperature = ");
   THtemp = DHT.temperature;
+  Serial.print("Temperature = ");
   Serial.println(THtemp);
+  THhumid = DHT.humidity;  
   Serial.print("Humidity = ");
-  THhumid = DHT.humidity;
   Serial.println(THhumid);
-  delay(1000);
 }
 
 //Method for reading LDR and turning on/of LEDs 
@@ -320,12 +353,32 @@ void LED3M(int i)
 //Method for activating WiFi Shield
 void InitWiFi()
 {
-  
+  WiFiClient client = server.available();
+  // wait for a client (web browser) to connect
+  if (client)
+  {
+    Serial.println("\n[Client connected]");
+    while (client.connected())
+    {
+      // read line by line what the client (web browser) is requesting
+      if (client.available())
+      {
+        String line = client.readStringUntil('\r');
+        ReceiveClientData(line);
+      }
+    }
+    delay(1); // give the web browser time to receive the data
+
+    // close the connection:
+    client.stop();
+    Serial.println("[Client disonnected]");
 }
 
 //Method for the making of sounds
-void Sounds(String song)
+void Sounds(String s)
 { 
+  song = s;
+  
   Sing(song);
 }
 
@@ -334,7 +387,7 @@ void Sing(String song)
   Serial.print("Currently playing song: ");
   Serial.println(song);
 
-  if(song == "")
+  if(song == "empty")
   {
     delay(1500);
     return;

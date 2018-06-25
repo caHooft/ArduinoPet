@@ -20,9 +20,14 @@
 #define LCDd6 6
 #define LCDd7 7
 #define LED 13
+#define LeftWheels 8
+#define RightWheels 10
 
 //Declaring some variables
-int x;
+long x;
+int DistanceLeft;
+int DistanceFront;
+int DistanceRight;
 
 //Declaring some hardware
 LiquidCrystal lcd(LCDrs, LCDen, LCDd4, LCDd5, LCDd6, LCDd7);
@@ -40,6 +45,8 @@ void setup()
 
   //Initializing pins
   pinMode(LED, OUTPUT);
+  pinMode(LeftWheels, OUTPUT);
+  pinMode(RightWheels, OUTPUT);
 }
 
 void loop() 
@@ -70,6 +77,34 @@ void loop()
   {
     ChangeMood(x);
   }
+  if(x >= 9 && x <= 11){
+    ToggleDir(x - 8);
+  }
+  if(x >= 100100100){
+    DistanceLeft = String(x).substring(0, 3).toInt() - 100;
+    DistanceFront = String(x).substring(3, 6).toInt() - 100;
+    DistanceRight = String(x).substring(6).toInt() - 100;
+  }
+}
+
+//Method for toggling the wheels
+void ToggleDir(byte dir){
+  if(dir == 1){
+    digitalWrite(LeftWheels, HIGH);
+    digitalWrite(RightWheels, HIGH);
+  }
+  else if(dir == 2){
+    digitalWrite(RightWheels, HIGH);
+    digitalWrite(LeftWheels, LOW);
+  }
+  else if(dir == 3){
+    digitalWrite(LeftWheels, HIGH);
+    digitalWrite(RightWheels, LOW);
+  }
+  else if(dir == 0){
+    digitalWrite(LeftWheels, LOW);
+    digitalWrite(RightWheels, LOW);
+  }
 }
 
 //Method for receiving commands
@@ -88,7 +123,47 @@ void LEDM(byte b)
 //Method for random movement
 void RandomMove()
 {
-  
+  DistanceLeft = String(x).substring(0, 3).toInt() - 100;
+  DistanceFront = String(x).substring(3, 6).toInt() - 100;
+  DistanceRight = String(x).substring(6).toInt() - 100;
+  Serial.println(DistanceLeft);
+  Serial.println(x);
+  if(50 >= DistanceLeft || 50 >= DistanceFront || 50 >= DistanceRight){
+    Serial.println("test");
+    if(DistanceLeft >= DistanceFront && DistanceLeft >= DistanceRight){
+      digitalWrite(RightWheels, HIGH);
+      delay(1000);
+      digitalWrite(LeftWheels, HIGH);
+      delay(1000);
+      digitalWrite(LeftWheels, LOW);
+      digitalWrite(RightWheels, LOW);
+    }
+    else if(DistanceFront >= DistanceLeft && DistanceFront >= DistanceRight){
+      if(DistanceLeft > DistanceRight){
+        digitalWrite(RightWheels, HIGH);
+        delay(2000);
+        digitalWrite(RightWheels, LOW);
+      }
+      else{
+        digitalWrite(LeftWheels, HIGH);
+        delay(2000);
+        digitalWrite(LeftWheels, LOW);
+      }
+    }
+    else if(DistanceRight >= DistanceLeft && DistanceRight >= DistanceFront){
+      digitalWrite(LeftWheels, HIGH);
+      delay(1000);
+      digitalWrite(RightWheels, HIGH);
+      delay(1000);
+      digitalWrite(RightWheels, LOW);
+      digitalWrite(LeftWheels, LOW);
+    }
+  }
+  digitalWrite(LeftWheels, HIGH);
+  digitalWrite(RightWheels, HIGH);
+  delay(1000);
+  digitalWrite(LeftWheels, LOW);
+  digitalWrite(RightWheels, LOW);
 }
 
 //Method for controlled movement

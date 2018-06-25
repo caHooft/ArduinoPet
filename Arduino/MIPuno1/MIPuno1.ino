@@ -34,14 +34,14 @@
 #define spkr 8
 #define tailpin 9
 
-#define trig A0
-#define echo A1
-#define LDR A2
+#define trig 14
+#define echo 15
+#define LDR 16
 
 //Declaring some variables
-float USdistance1;
-float USdistance2;
-float USdistance3;
+int USdistance1;
+int USdistance2;
+int USdistance3;
 int servoValue;
 float lightvalue;
 float THvalue;
@@ -223,7 +223,9 @@ void ReceiveClientData(String cmd)
 //Method for moving
 void MtrSend(int i)
 {
-  
+  Wire.beginTransmission(9);
+  Wire.write(i);
+  Wire.endTransmission();
 }
 
 //Method for sweeping the tail
@@ -242,23 +244,24 @@ void Neck()
   neck.write(180);
   delay(1000);
   USdistance1 = Distance();
-  Serial.print(USdistance1);
+  Serial.print(USdistance1 - 100);
   Serial.print("cm links, ");
   neck.write(90);
   delay(1000);
   USdistance2 = Distance();
-  Serial.print(USdistance2);
+  Serial.print(USdistance2 - 100);
   Serial.print("cm voor en ");
   neck.write(0);
   delay(1000);
   USdistance3 = Distance();
-  Serial.print(USdistance3);
+  Serial.print(USdistance3 - 100);
   Serial.println("cm rechts.");
+  MtrSend((String(USdistance1) + String(USdistance2) + String(USdistance3)).toInt());
   neck.write(90);
 }
 
 //Method for reading ultra sonic sensor and avoiding collisions
-float Distance()
+int Distance()
 {
   digitalWrite(trig, LOW);
   delayMicroseconds(2);
@@ -266,7 +269,12 @@ float Distance()
   delayMicroseconds(10);
   digitalWrite(trig, LOW);
   float USvalue = pulseIn(echo, HIGH) / 29 / 2;
-  return USvalue;
+  if(USvalue > 200){
+    return 300;
+  }
+  else{
+    return USvalue + 100;
+  }
 }
 
 

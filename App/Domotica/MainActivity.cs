@@ -83,7 +83,7 @@ namespace Domotica
 
             sounds = new List<KeyValuePair<string, string>>
             {
-                new KeyValuePair<string, string>("Empty", ""),
+                new KeyValuePair<string, string>("Empty", "empty"),
                 new KeyValuePair<string, string>("Mario", "mario"),
                 new KeyValuePair<string, string>("Underworld", "underworld")
             };

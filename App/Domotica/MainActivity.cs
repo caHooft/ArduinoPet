@@ -62,6 +62,7 @@ namespace Domotica
         // Variables (components/controls)
         // Controls on GUI
         ToggleButton AIbutton, lightsToggle;
+        Button ForwardButton, LeftButton, RightButton, DownButton;
         TextView MIPStatusText, HumidityValueText, LDRValueText;
         Spinner eyesSpinner, musicSpinner;
 
@@ -99,8 +100,29 @@ namespace Domotica
             MIPStatusText = FindViewById<TextView>(Resource.Id.MIPStatusValue);
             lightsToggle = FindViewById<ToggleButton>(Resource.Id.LightsToggle);
             AIbutton = FindViewById<ToggleButton>(Resource.Id.AIToggle);
+            ForwardButton = FindViewById<Button>(Resource.Id.moveUpButton);
+            LeftButton = FindViewById<Button>(Resource.Id.moveLeftButton);
+            RightButton = FindViewById<Button>(Resource.Id.moveRightButton);
+            DownButton = FindViewById<Button>(Resource.Id.moveUpButton);
 
-            if(AIbutton != null)
+            if (ForwardButton != null)
+            {
+                ForwardButton.Click += (o, e) => MovementButton(o, e, 0);
+            }
+            if (DownButton != null)
+            {
+                DownButton.Click += (o, e) => MovementButton(o, e, 1);
+            }
+            if (LeftButton != null)
+            {
+                LeftButton.Click += (o, e) => MovementButton(o, e, 2);
+            }
+            if (RightButton != null)
+            {
+                RightButton.Click += (o, e) => MovementButton(o, e, 3);
+            }
+
+            if (AIbutton != null)
             {
                 AIbutton.Click += (o, e) => OnAIToggle(o, e);
             }
@@ -137,7 +159,17 @@ namespace Domotica
 
             server.Connect(this); 
         }
-        
+
+        private void MovementButton(object sender, EventArgs args, int val)
+        {
+            Button toggle = (Button)sender;
+            if (toggle != null)
+            {
+                string sendText = "MotorCommand" + val;
+                SendStringToArduino(sendText, MIPStatusText);
+                Toast.MakeText(this, sendText, ToastLength.Long).Show();
+            }
+        }
 
         private void Mood_ItemSelected(object sender, AdapterView.ItemSelectedEventArgs e)
         {

@@ -34,7 +34,7 @@ namespace Domotica
         public void Connect(MainActivity activity)
         {
             if (CheckValidIpAddress(IPADRESS) && CheckValidPort(PORT))
-            {
+                                   {
                 if (connector == null) // -> simple sockets
                 {
                     ConnectSocket(IPADRESS, PORT, activity);

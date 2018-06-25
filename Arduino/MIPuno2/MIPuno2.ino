@@ -123,6 +123,9 @@ void LEDM(byte b)
 //Method for random movement
 void RandomMove()
 {
+  //0.8125 is 90
+  //1.625 is 180
+  //3.25 is 360
   DistanceLeft = String(x).substring(0, 3).toInt() - 100;
   DistanceFront = String(x).substring(3, 6).toInt() - 100;
   DistanceRight = String(x).substring(6).toInt() - 100;
@@ -132,38 +135,40 @@ void RandomMove()
     Serial.println("test");
     if(DistanceLeft >= DistanceFront && DistanceLeft >= DistanceRight){
       digitalWrite(RightWheels, HIGH);
-      delay(1000);
+      delay(813);
       digitalWrite(LeftWheels, HIGH);
       delay(1000);
       digitalWrite(LeftWheels, LOW);
       digitalWrite(RightWheels, LOW);
     }
     else if(DistanceFront >= DistanceLeft && DistanceFront >= DistanceRight){
-      if(DistanceLeft > DistanceRight){
+      if(DistanceLeft >= DistanceRight){
         digitalWrite(RightWheels, HIGH);
-        delay(2000);
+        delay(813);
         digitalWrite(RightWheels, LOW);
       }
       else{
         digitalWrite(LeftWheels, HIGH);
-        delay(2000);
+        delay(813);
         digitalWrite(LeftWheels, LOW);
       }
     }
     else if(DistanceRight >= DistanceLeft && DistanceRight >= DistanceFront){
       digitalWrite(LeftWheels, HIGH);
-      delay(1000);
+      delay(813);
       digitalWrite(RightWheels, HIGH);
       delay(1000);
       digitalWrite(RightWheels, LOW);
       digitalWrite(LeftWheels, LOW);
     }
   }
-  digitalWrite(LeftWheels, HIGH);
-  digitalWrite(RightWheels, HIGH);
-  delay(1000);
-  digitalWrite(LeftWheels, LOW);
-  digitalWrite(RightWheels, LOW);
+  else{
+    digitalWrite(LeftWheels, HIGH);
+    digitalWrite(RightWheels, HIGH);
+    delay(1000);
+    digitalWrite(LeftWheels, LOW);
+    digitalWrite(RightWheels, LOW);
+  }
 }
 
 //Method for controlled movement

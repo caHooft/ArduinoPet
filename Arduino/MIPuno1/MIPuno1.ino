@@ -22,7 +22,7 @@
 //Including libraries
 #include <Wire.h>
 #include <Servo.h>
-//#include <dht.h>
+#include <dht.h>
 #include "pitches.h"
 
 //Declaring pins
@@ -52,7 +52,7 @@ String song = "empty";
 //Declaring some hardware
 Servo neck;
 Servo tail;
-//dht DHT;
+dht DHT;
 
 //Declaring song arrays
 int mario_melody[] = 
@@ -273,14 +273,14 @@ float Distance()
 //Method for measuring temperature & humidity
 void ReadTH()
 {
-/*  THvalue = DHT.read11(TH);
+  THvalue = DHT.read11(TH);
   THtemp = DHT.temperature;
   Serial.print("Temperature = ");
   Serial.println(THtemp);
   THhumid = DHT.humidity;  
   Serial.print("Humidity = ");
   Serial.println(THhumid);
-*/}
+}
 
 //Method for reading LDR and turning on/of LEDs 
 void ReadLight()

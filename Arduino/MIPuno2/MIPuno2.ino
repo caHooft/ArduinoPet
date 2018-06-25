@@ -135,7 +135,7 @@ void RandomMove()
     Serial.println("test");
     if(DistanceLeft >= DistanceFront && DistanceLeft >= DistanceRight){
       digitalWrite(RightWheels, HIGH);
-      delay(813);
+      delay(2000);
       digitalWrite(LeftWheels, HIGH);
       delay(1000);
       digitalWrite(LeftWheels, LOW);
@@ -144,18 +144,18 @@ void RandomMove()
     else if(DistanceFront >= DistanceLeft && DistanceFront >= DistanceRight){
       if(DistanceLeft >= DistanceRight){
         digitalWrite(RightWheels, HIGH);
-        delay(813);
+        delay(2000);
         digitalWrite(RightWheels, LOW);
       }
       else{
         digitalWrite(LeftWheels, HIGH);
-        delay(813);
+        delay(2000);
         digitalWrite(LeftWheels, LOW);
       }
     }
     else if(DistanceRight >= DistanceLeft && DistanceRight >= DistanceFront){
       digitalWrite(LeftWheels, HIGH);
-      delay(813);
+      delay(2000);
       digitalWrite(RightWheels, HIGH);
       delay(1000);
       digitalWrite(RightWheels, LOW);

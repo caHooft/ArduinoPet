@@ -22,7 +22,7 @@
 //Including libraries
 #include <Wire.h>
 #include <Servo.h>
-#include <dht.h>
+//#include <dht.h>
 #include "pitches.h"
 
 //Declaring pins
@@ -47,12 +47,12 @@ float lightvalue;
 float THvalue;
 int THtemp;
 int THhumid;
-String song = "mario";
+String song = "empty";
 
 //Declaring some hardware
 Servo neck;
 Servo tail;
-dht DHT;
+//dht DHT;
 
 //Declaring song arrays
 int mario_melody[] = 
@@ -103,7 +103,6 @@ void setup()
   Serial.println("Arduino UNO 1 start");
   
   //Seting up some hardware
-  server.begin();
   neck.attach(neckpin);
   neck.write(90);
   tail.attach(tailpin);
@@ -190,7 +189,7 @@ void ReceiveClientData(String cmd)
       MtrSend(2);
     }
   }
-
+/*
   if(choosesongcmd > 0)
   {
     String choosesong = cmd[choosesongcmd + 1];
@@ -200,7 +199,7 @@ void ReceiveClientData(String cmd)
 
     Sounds(choosesong);
   }
-}
+*/}
 
 //Method for moving
 void MtrSend(int i)
@@ -257,14 +256,14 @@ float Distance()
 //Method for measuring temperature & humidity
 void ReadTH()
 {
-  THvalue = DHT.read11(TH);
+/*  THvalue = DHT.read11(TH);
   THtemp = DHT.temperature;
   Serial.print("Temperature = ");
   Serial.println(THtemp);
   THhumid = DHT.humidity;  
   Serial.print("Humidity = ");
   Serial.println(THhumid);
-}
+*/}
 
 //Method for reading LDR and turning on/of LEDs 
 void ReadLight()
@@ -274,12 +273,12 @@ void ReadLight()
   Serial.print("Read LDR at: ");
   Serial.println(lightvalue);
 
-  if(lightvalue >= 400)
+  if(lightvalue >= 200)
   {
     LED2M(HIGH);
   }
 
-  else if(lightvalue < 400)
+  else if(lightvalue < 200)
   {
     LED2M(LOW);
   }
@@ -353,7 +352,6 @@ void Sing(String song)
   if(song == "empty")
   {
     delay(1500);
-    return;
   }
   
   if(song == "mario")

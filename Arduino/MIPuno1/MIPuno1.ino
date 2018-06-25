@@ -42,6 +42,7 @@
 int USdistance1;
 int USdistance2;
 int USdistance3;
+long USLong;
 int servoValue;
 float lightvalue;
 float THvalue;
@@ -221,10 +222,10 @@ void ReceiveClientData(String cmd)
 */}
 
 //Method for moving
-void MtrSend(int i)
+void MtrSend(long l)
 {
   Wire.beginTransmission(9);
-  Wire.write(i);
+  Wire.write(l);
   Wire.endTransmission();
 }
 
@@ -256,7 +257,12 @@ void Neck()
   USdistance3 = Distance();
   Serial.print(USdistance3 - 100);
   Serial.println("cm rechts.");
-  MtrSend((String(USdistance1) + String(USdistance2) + String(USdistance3)).toInt());
+
+  USLong = ((String(USdistance1) + String(USdistance2) + String(USdistance3)).toInt());
+
+  Serial.println(USLong);
+  
+  MtrSend(USLong);
   neck.write(90);
 }
 

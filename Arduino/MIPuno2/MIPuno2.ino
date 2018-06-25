@@ -77,14 +77,19 @@ void loop()
   {
     ChangeMood(x);
   }
-  if(x >= 9 && x <= 11){
+  if(x >= 9 && x <= 11)
+  {
     ToggleDir(x - 8);
   }
-  if(x >= 100100100){
+  
+  if(x >= 100100100)
+  {
     DistanceLeft = String(x).substring(0, 3).toInt() - 100;
     DistanceFront = String(x).substring(3, 6).toInt() - 100;
     DistanceRight = String(x).substring(6).toInt() - 100;
   }
+
+  RandomMove();
 }
 
 //Method for toggling the wheels
@@ -123,14 +128,18 @@ void LEDM(byte b)
 //Method for random movement
 void RandomMove()
 {
+  Serial.println(x);  
   //0.8125 is 90
   //1.625 is 180
   //3.25 is 360
   DistanceLeft = String(x).substring(0, 3).toInt() - 100;
   DistanceFront = String(x).substring(3, 6).toInt() - 100;
   DistanceRight = String(x).substring(6).toInt() - 100;
+  
   Serial.println(DistanceLeft);
-  Serial.println(x);
+  Serial.println(DistanceFront);
+  Serial.println(DistanceRight);
+
   if(50 >= DistanceLeft || 50 >= DistanceFront || 50 >= DistanceRight){
     Serial.println("test");
     if(DistanceLeft >= DistanceFront && DistanceLeft >= DistanceRight){

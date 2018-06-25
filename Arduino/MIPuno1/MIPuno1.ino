@@ -182,7 +182,7 @@ void ReceiveClientData(String cmd)
         Serial.print("Send motor command");  
 
         Wire.beginTransmission(9);
-        Wire.write(motordirec);                       //Values between 8 and 11
+        Wire.write(mtrdirec);                       //Values between 8 and 11
         Wire.endTransmission();
       }
     }

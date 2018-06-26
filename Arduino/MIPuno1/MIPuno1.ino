@@ -117,7 +117,7 @@ void setup()
   pinMode(echo, INPUT);
   pinMode(LDR, INPUT);
   pinMode(TH, INPUT);
-
+/*
   //Checking wire connection
   Wire.beginTransmission(9);
   Wire.write(1);
@@ -135,7 +135,7 @@ void setup()
   Wire.write(0);
   Wire.endTransmission();
   delay(200);
-}
+*/}
 
 void loop() 
 {  
@@ -205,7 +205,7 @@ void ReceiveClientData(String cmd)
     }
   }
 
-  if(mipspeecmd > 0)
+  if(mipspeedcmd > 0)
   {
      int endValue = cmd.indexOf("]");
      int mipspeeed = cmd.substring(mipspeedcmd+8, endValue).toInt();
@@ -231,15 +231,14 @@ void ReceiveClientData(String cmd)
 }
 
 //Method for moving
-void MtrSend(long l)
+void MtrSend(int i)
 {
-  Wire.beginTransmission(9);
-  
   Serial.print("x at: ");
-  Serial.println(l);
+  Serial.println(i);
   Serial.println("Sending motor command");
   
-  Wire.write(l);
+  Wire.beginTransmission(9);  
+  Wire.write(i);
   Wire.endTransmission();
 }
 

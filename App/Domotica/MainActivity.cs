@@ -63,8 +63,15 @@ namespace Domotica
         // Controls on GUI
         ToggleButton AIbutton, lightsToggle;
         Button ForwardButton, LeftButton, RightButton, DownButton;
-        TextView MIPStatusText, HumidityValueText, LDRValueText;
+        TextView MIPStatusText, HumidityValueText, LDRValueText, MIPSpeedValueText, TemperatureValueText;
         Spinner eyesSpinner, musicSpinner;
+        SeekBar MipSpeedSlider;
+
+        Timer EnergySaveTimer;
+
+        bool EnergySparing = false;
+        int EnergySparingTime = 0;
+        int EnergySparingCooldown = 300;
 
         private List<KeyValuePair<string, int>> moods;
         private List<KeyValuePair<string, string>> sounds;
@@ -98,30 +105,36 @@ namespace Domotica
             HumidityValueText = FindViewById<TextView>(Resource.Id.HumidityValue);
             LDRValueText = FindViewById<TextView>(Resource.Id.LDRDataValue);
             MIPStatusText = FindViewById<TextView>(Resource.Id.MIPStatusValue);
+            TemperatureValueText = FindViewById<TextView>(Resource.Id.TempValue);
             lightsToggle = FindViewById<ToggleButton>(Resource.Id.LightsToggle);
             AIbutton = FindViewById<ToggleButton>(Resource.Id.AIToggle);
+            MIPSpeedValueText = FindViewById<TextView>(Resource.Id.MipSpeedValue);
+            MipSpeedSlider = FindViewById<SeekBar>(Resource.Id.MipSpeedSlider);
             ForwardButton = FindViewById<Button>(Resource.Id.moveUpButton);
             LeftButton = FindViewById<Button>(Resource.Id.moveLeftButton);
             RightButton = FindViewById<Button>(Resource.Id.moveRightButton);
-            DownButton = FindViewById<Button>(Resource.Id.moveUpButton);
+            DownButton = FindViewById<Button>(Resource.Id.moveDownButton);
 
+            if(MipSpeedSlider != null)
+            {
+                MipSpeedSlider.ProgressChanged += (o, s) => MIPSpeedValueChanged(o, s);
+            }
             if (ForwardButton != null)
             {
-                ForwardButton.Click += (o, e) => MovementButton(o, e, 0);
+                ForwardButton.Click += (o, e) => MovementButton(o, e, 11);
             }
             if (DownButton != null)
             {
-                DownButton.Click += (o, e) => MovementButton(o, e, 1);
+                DownButton.Click += (o, e) => MovementButton(o, e, 12);
             }
             if (LeftButton != null)
             {
-                LeftButton.Click += (o, e) => MovementButton(o, e, 2);
+                LeftButton.Click += (o, e) => MovementButton(o, e, 9);
             }
             if (RightButton != null)
             {
-                RightButton.Click += (o, e) => MovementButton(o, e, 3);
+                RightButton.Click += (o, e) => MovementButton(o, e, 10);
             }
-
             if (AIbutton != null)
             {
                 AIbutton.Click += (o, e) => OnAIToggle(o, e);
@@ -157,7 +170,44 @@ namespace Domotica
                 musicSpinner.ItemSelected += (sender, args) => Music_ItemSelected(sender, args);
             }
 
-            server.Connect(this); 
+            EnergySaveTimer = new Timer(EnergySparingCooldown);
+            EnergySaveTimer.Interval = 100;
+            EnergySaveTimer.Elapsed += new ElapsedEventHandler(OnTimeEvent);
+            EnergySaveTimer.Enabled = true;
+            EnergySaveTimer.Start();
+
+            // uncomment to use with server
+            //server.Connect(this); 
+        }
+
+        private void OnTimeEvent(object source, ElapsedEventArgs e)
+        {
+            RunOnUiThread(delegate
+            {
+                if (!EnergySparing) return;
+                EnergySparingTime++;
+                if (EnergySparingTime >= EnergySparingCooldown)
+                {
+                    EnergySaveTimer.Enabled = false;
+
+                    Toast.MakeText(this, "Energy Saving Mode Enabled!", ToastLength.Long).Show();
+                    SendStringToArduino("8", MIPStatusText);
+                }                
+            });
+        }
+
+
+        private void MIPSpeedValueChanged(object sender, EventArgs arg)
+        {
+            SeekBar slider = (SeekBar)sender;
+            if (slider != null)
+            {
+                int value = slider.Progress;
+                MIPSpeedValueText.Text = "MIP Speed = " + value;
+                string sendText = "MIPSpeed" + value + "]";
+                SendStringToArduino(sendText, MIPStatusText);
+                Toast.MakeText(this, sendText, ToastLength.Long).Show();
+            }
         }
 
         private void MovementButton(object sender, EventArgs args, int val)
@@ -182,6 +232,7 @@ namespace Domotica
 
             string sendText = "ChangeMood" + moods[e.Position].Value;
             SendStringToArduino(sendText, MIPStatusText);
+            MIPStatusText.Text = spinner.GetItemAtPosition(e.Position).ToString();
         }
 
         private void Music_ItemSelected(object sender, AdapterView.ItemSelectedEventArgs e)
@@ -206,6 +257,10 @@ namespace Domotica
         {
             LDRValueText.Text = value;
         }
+        public void DisplayTemperatureValue(string value)
+        {
+            LDRValueText.Text = value;
+        }
 
         private void OnLightsToggle(object sender,  EventArgs args)
         {
@@ -225,6 +280,7 @@ namespace Domotica
             if(toggle != null)
             {
                 string sendText = "AIToggle" + Convert.ToInt32(toggle.Checked);
+                EnergySparing = !toggle.Checked;
 
                 SendStringToArduino(sendText, MIPStatusText);
                 Toast.MakeText(this, sendText, ToastLength.Long).Show();
@@ -233,8 +289,15 @@ namespace Domotica
 
         public void SendStringToArduino(string cmd, TextView text)
         {
-            if (!server.Send(cmd)) server.Connect(this);
-            
+            // uncomment to use with server
+            //if (!server.Send(cmd)) server.Connect(this);
+
+            if (cmd == "8")
+            {
+                text.Text = "Sleeping";
+                return;
+            }
+
             /*string data = server.Receive();
             if(data == "-")
             {

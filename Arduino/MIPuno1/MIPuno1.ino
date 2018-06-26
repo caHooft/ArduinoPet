@@ -3,7 +3,7 @@
 
 //All methods
 /*
- * MtrMove
+ * MtrSend
  * Tail
  * Neck
  * Distance
@@ -121,14 +121,20 @@ void setup()
   //Checking wire connection
   Wire.beginTransmission(9);
   Wire.write(1);
-  delay(200);
-  Wire.write(0);
-  delay(200);
-  Wire.write(1);
-  delay(200);
-  Wire.write(0);
-  delay(200);
   Wire.endTransmission();
+  delay(200);
+  Wire.beginTransmission(9);
+  Wire.write(0);
+  Wire.endTransmission();
+  delay(200);
+  Wire.beginTransmission(9);
+  Wire.write(1);
+  Wire.endTransmission();
+  delay(200);
+  Wire.beginTransmission(9);
+  Wire.write(0);
+  Wire.endTransmission();
+  delay(200);
 }
 
 void loop() 
@@ -225,6 +231,11 @@ void ReceiveClientData(String cmd)
 void MtrSend(long l)
 {
   Wire.beginTransmission(9);
+  
+  Serial.print("x at: ");
+  Serial.println(l);
+  Serial.println("Sending motor command");
+  
   Wire.write(l);
   Wire.endTransmission();
 }

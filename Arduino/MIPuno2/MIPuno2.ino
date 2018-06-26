@@ -24,7 +24,7 @@
 #define RightWheels 10
 
 //Declaring some variables
-long x;
+int x;
 int DistanceLeft;
 int DistanceFront;
 int DistanceRight;
@@ -35,6 +35,7 @@ LiquidCrystal lcd(LCDrs, LCDen, LCDd4, LCDd5, LCDd6, LCDd7);
 void setup() 
 {
   Wire.begin(9);
+  Wire.onReceive(ReceiveEvent);
   Serial.begin(9600);
   Serial.println("Arduino UNO 2 start");
   
@@ -51,12 +52,13 @@ void setup()
 
 void loop() 
 {
+  Serial.println();
   Serial.println("-------------------------------------------------");
   Serial.println();
   Serial.println("Restart loop");
   Serial.println();
 
-  Wire.onReceive(ReceiveEvent);
+  
   
   if(x == 0) 
   {
@@ -90,32 +92,19 @@ void loop()
   }
 
   RandomMove();
+
+  x = 0;
 }
 
-//Method for toggling the wheels
-void ToggleDir(byte dir){
-  if(dir == 1){
-    digitalWrite(LeftWheels, HIGH);
-    digitalWrite(RightWheels, HIGH);
-  }
-  else if(dir == 2){
-    digitalWrite(RightWheels, HIGH);
-    digitalWrite(LeftWheels, LOW);
-  }
-  else if(dir == 3){
-    digitalWrite(LeftWheels, HIGH);
-    digitalWrite(RightWheels, LOW);
-  }
-  else if(dir == 0){
-    digitalWrite(LeftWheels, LOW);
-    digitalWrite(RightWheels, LOW);
-  }
-}
+
 
 //Method for receiving commands
 void ReceiveEvent(int bytes)
 {
   x = Wire.read();
+
+  Serial.print("Read wire at: ");
+  Serial.println(x);
 }
 
 void LEDM(byte b)
@@ -128,7 +117,6 @@ void LEDM(byte b)
 //Method for random movement
 void RandomMove()
 {
-  Serial.println(x);  
   //0.8125 is 90
   //1.625 is 180
   //3.25 is 360
@@ -190,6 +178,26 @@ void ControlMove(int dir)
 void Movement()
 {
   
+}
+
+//Method for toggling the wheels
+void ToggleDir(byte dir){
+  if(dir == 1){
+    digitalWrite(LeftWheels, HIGH);
+    digitalWrite(RightWheels, HIGH);
+  }
+  else if(dir == 2){
+    digitalWrite(RightWheels, HIGH);
+    digitalWrite(LeftWheels, LOW);
+  }
+  else if(dir == 3){
+    digitalWrite(LeftWheels, HIGH);
+    digitalWrite(RightWheels, LOW);
+  }
+  else if(dir == 0){
+    digitalWrite(LeftWheels, LOW);
+    digitalWrite(RightWheels, LOW);
+  }
 }
 
 //Method for receiving mood from DUE

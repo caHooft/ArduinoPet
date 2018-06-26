@@ -207,7 +207,8 @@ void ReceiveClientData(String cmd)
 
   if(mipspeecmd > 0)
   {
-    int mipspeeed = cmd[mipspeedcmd + 1];
+     int endValue = cmd.indexOf("]");
+     int mipspeeed = cmd.substring(mipspeedcmd+8, endValue).toInt();
   }
   
   if(moodchangecmd > 0)
@@ -219,19 +220,15 @@ void ReceiveClientData(String cmd)
     Wire.beginTransmission(9);
     Wire.write(moodchange);                           //Values between 3 and 7
     Wire.endTransmission();
-  }
-  
-/*
-  if(choosesongcmd > 0)
-  {
-    String choosesong = cmd[choosesongcmd + 1];
+  } 
 
-    Serial.print("Set song to: ");
-    Serial.print(choosesong);
-
-    Sounds(choosesong);
+  if(choosesongcmd> 0) {    
+     int endValue = cmd.indexOf("]");
+     String song = cmd.substring(choosesongcmd+10, endValue);
+     Serial.print("Change song to : ");
+     Serial.println(song);
   }
-*/}
+}
 
 //Method for moving
 void MtrSend(long l)

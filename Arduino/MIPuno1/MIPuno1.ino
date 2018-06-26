@@ -164,6 +164,7 @@ void ReceiveClientData(String cmd)
   int LEDvaluecmd = cmd.indexOf("LightsToggle");
   int mtrvaluecmd = cmd.indexOf("MotorBool");
   int mtrdireccmd = cmd.indexOf("MotorCommand");
+  int mipspeedcmd = cmd.indexOf("MIPSpeed");
   int moodchangecmd = cmd.indexOf("MoodChange");
   int choosesongcmd = cmd.indexOf("ChooseSong");
 
@@ -204,6 +205,11 @@ void ReceiveClientData(String cmd)
     }
   }
 
+  if(mipspeecmd > 0)
+  {
+    int mipspeeed = cmd[mipspeedcmd + 1];
+  }
+  
   if(moodchangecmd > 0)
   {
     int moodchange = cmd[moodchangecmd + 1];

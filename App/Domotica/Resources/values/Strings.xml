@@ -21,10 +21,13 @@
   <string name="humidity_value">Great weather</string>
   <string name="ldr_data_text">LDR Data : </string>
   <string name="ldr_data_value">Dark Bro</string>
-  <string name="move_up">^</string>
-  <string name="move_down">V</string>
-  <string name="move_left">{</string>
-  <string name="move_right">></string>
+  <string name="temp_text">Temperature</string>
+  <string name="temp_value">Hot ASF Boi</string>
+  <string name="speed_value">MIP Speed = </string>
+  <string name="move_up">▲</string>
+  <string name="move_down">Brake</string>
+  <string name="move_left">◄</string>
+  <string name="move_right">►</string>
   <string name="exit">Exit</string>
   <string name="abort">Abort</string>
 </resources>

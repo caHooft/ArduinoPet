@@ -68,6 +68,24 @@
                 android:layout_below="@id/LDRDataText"
                 android:layout_alignParentLeft="true"
                 android:textColor="#ffffff" />
+            <TextView
+                android:text="@string/temp_value"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:layout_width="200dp"
+                android:layout_height="30dp"
+                android:id="@+id/TempValue"
+                android:layout_below="@id/HumidityValue"
+                android:layout_alignParentRight="true"
+                android:textColor="#ffffff" />
+            <TextView
+                android:text="@string/temp_text"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:id="@+id/TempText"
+                android:layout_width="200dp"
+                android:layout_height="30dp"
+                android:layout_below="@id/HumidityText"
+                android:layout_alignParentLeft="true"
+                android:textColor="#ffffff" />
         </RelativeLayout>
     </RelativeLayout>
     <LinearLayout
@@ -101,6 +119,28 @@
             android:layout_alignParentRight="true"
             android:spinnerMode="dropdown" />
     </LinearLayout>
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="50dp"
+        android:background="#ff4062"
+        android:id="@+id/jemoder"
+        android:layout_marginBottom="0.0dp">
+        <TextView
+            android:text="@string/speed_value"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:layout_width="200dp"
+            android:layout_height="30dp"
+            android:id="@+id/MipSpeedValue"
+            android:layout_alignParentRight="true"
+            android:textColor="#ffffff" />
+        <SeekBar
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/MipSpeedSlider"
+            android:max="255"
+            android:layout_marginRight="0.0dp" />
+    </LinearLayout>
     <RelativeLayout
         android:paddingBottom="2dp"
         android:layout_width="fill_parent"
@@ -118,6 +158,7 @@
             android:textColor="#ffffff" />
         <Button
             android:text="@string/move_up"
+            android:textAppearance="?android:attr/textAppearanceLarge"
             android:layout_width="125dp"
             android:layout_height="125dp"
             android:layout_centerHorizontal="true"
@@ -126,6 +167,7 @@
             android:backgroundTint="#b22c44" />
         <Button
             android:text="@string/move_left"
+            android:textAppearance="?android:attr/textAppearanceLarge"
             android:layout_width="125dp"
             android:layout_height="125dp"
             android:layout_below="@id/moveUpButton"
@@ -134,6 +176,7 @@
             android:backgroundTint="#b22c44" />
         <Button
             android:text="@string/move_right"
+            android:textAppearance="?android:attr/textAppearanceLarge"
             android:layout_width="125dp"
             android:layout_height="125dp"
             android:layout_below="@id/moveUpButton"
@@ -142,6 +185,7 @@
             android:backgroundTint="#b22c44" />
         <Button
             android:text="@string/move_down"
+            android:textAppearance="?android:attr/textAppearanceLarge"
             android:layout_width="125dp"
             android:layout_height="125dp"
             android:layout_below="@id/moveUpButton"

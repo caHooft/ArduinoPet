@@ -9,6 +9,7 @@
  * ControlMove
  * ToggleDir
  * Movement
+ * Tail
  * ReceiveMood
  * ChangeMood
  */
@@ -28,6 +29,7 @@
 #define RightWheels 8
 #define LeftWheels 9
 #define neckpin 10
+#define tailpin 11
 #define LED 13
 
 #define trig 14
@@ -41,18 +43,24 @@ int DistanceRight = 0;
 
 //Declaring some hardware
 Servo neck;
+Servo tail;
 LiquidCrystal lcd(LCDrs, LCDen, LCDd4, LCDd5, LCDd6, LCDd7);
 
 void setup() 
 {
   Wire.begin(9);
   Wire.onReceive(ReceiveEvent);
+  
   Serial.begin(9600);
   Serial.println("Arduino UNO 2 start");
   
   //Seting up some hardware
   neck.attach(neckpin);
   neck.write(90);
+  
+  tail.attach(tailpin);
+  tail.write(90);
+  
   lcd.begin(16, 2);
   lcd.setCursor(0, 0);
   lcd.print("     __  __     ");
@@ -75,6 +83,9 @@ void loop()
   Serial.println("Restart loop");
   Serial.println();
   Neck();
+  Serial.println();
+  Tail();
+  Serial.println();
   RandomMove();
   Serial.println();
 
@@ -276,6 +287,16 @@ void ToggleDir(byte dir){
     digitalWrite(LeftWheels, LOW);
     digitalWrite(RightWheels, LOW);
   }
+}
+
+//Method for sweeping the tail
+void Tail()
+{
+  tail.write(180);
+  delay(200);
+  tail.write(0);
+  delay(400);
+  tail.write(90);
 }
 
 //Method for changing mood on LCD

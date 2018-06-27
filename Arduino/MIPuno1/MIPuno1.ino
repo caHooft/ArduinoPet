@@ -237,6 +237,11 @@ void MtrSend(int i)
   Serial.println(i);
   Serial.println("Sending motor command");
   
+  if(i > 255)  
+  {
+    i = 255;
+  }
+  
   Wire.beginTransmission(9);  
   Wire.write(i);
   Wire.endTransmission();
@@ -258,24 +263,27 @@ void Neck()
   neck.write(180);
   delay(1000);
   USdistance1 = Distance();
-  Serial.print(USdistance1 - 100);
-  Serial.print("cm links, ");
+  Serial.print(USdistance1);
+  Serial.println("cm links");
+  MtrSend(USdistance1);
+  Serial.println();
+  
   neck.write(90);
   delay(1000);
   USdistance2 = Distance();
-  Serial.print(USdistance2 - 100);
-  Serial.print("cm voor en ");
+  Serial.print(USdistance2);
+  Serial.println("cm voor");
+  MtrSend(USdistance2);
+  Serial.println();
+  
   neck.write(0);
   delay(1000);
   USdistance3 = Distance();
-  Serial.print(USdistance3 - 100);
-  Serial.println("cm rechts.");
-
-  USLong = ((String(USdistance1) + String(USdistance2) + String(USdistance3)).toInt());
-
-  Serial.println(USLong);
+  Serial.print(USdistance3);
+  Serial.println("cm rechts");
+  MtrSend(USdistance3);
+  Serial.println();
   
-  MtrSend(USLong);
   neck.write(90);
 }
 
@@ -288,12 +296,8 @@ int Distance()
   delayMicroseconds(10);
   digitalWrite(trig, LOW);
   float USvalue = pulseIn(echo, HIGH) / 29 / 2;
-  if(USvalue > 200){
-    return 300;
-  }
-  else{
-    return USvalue + 100;
-  }
+
+  return USvalue;
 }
 
 

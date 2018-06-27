@@ -424,4 +424,105 @@ void AngryBrows()
   lcd.write(byte(7));
 }
 
+void DisgustedBrows()
+{
+  byte browOne[8] = {0,0b00011,0b01111,0b11100,0b11000,0b10000,0,0};
+  lcd.createChar(0,browOne);
+  byte browTwo[8] = {0b11111,0b11111,0b11000,0,0,0,0,0};
+  lcd.createChar(1,browTwo);
+  byte browThree[8] = {0b11111,0b11111,0b00011,0,0,0,0,0};
+  lcd.createChar(2,browThree);
+  byte browFour[8] = {0,0b11000,0b11110,0b00111,0b00011,0b00001,0,0};
+  lcd.createChar(3,browFour);
+  byte browFive[8] = {0,0,0,0,0,0b11100,0b01111,0b00011};
+  lcd.createChar(4,browFive);
+  byte browSix[8] = {0,0,0,0,0,0b00011,0b11111,0b11100};
+  lcd.createChar(5,browSix);
+  byte browSeven[8] = {0,0,0,0b00011,0b11111,0b11100,0,0};
+  lcd.createChar(6,browSeven);
+  byte browEight[8] = {0,0b00111,0b11110,0b11100,0,0,0,0};
+  lcd.createChar(7,browEight);
+
+  lcd.clear();
+  lcd.setCursor(2,0);
+  lcd.write(byte(0));
+  lcd.write(byte(1));
+  lcd.write(byte(2));
+  lcd.write(byte(3));
+  lcd.setCursor(10,1);
+  lcd.write(byte(4));
+  lcd.write(byte(5));
+  lcd.write(byte(6));
+  lcd.write(byte(7));
+}
+
+void SadBrows()
+{
+  byte browOne[8] = {0,0,0,0,0,0b00111,0b11111,0b11100};
+  lcd.createChar(0,browOne);
+  byte browTwo[8] = {0,0,0,0,0b01111,0b11111,0b11000,0};
+  lcd.createChar(1,browTwo);
+  byte browThree[8] = {0,0,0,0b01111,0b11111,0b11000,0,0};
+  lcd.createChar(2,browThree);
+  byte browFour[8] = {0b00110,0b00111,0b01111,0b11110,0b11100,0,0,0};
+  lcd.createChar(3,browFour);
+  byte browFive[8] = {0b01100,0b11100,0b11110,0b01111,0b00111,0,0,0};
+  lcd.createChar(4,browFive);
+  byte browSix[8] = {0,0,0,0b11110,0b11111,0b00011,0,0};
+  lcd.createChar(5,browSix);
+  byte browSeven[8] = {0,0,0,0,0b11110,0b11111,0b00011,0};
+  lcd.createChar(6,browSeven);
+  byte browEight[8] = {0,0,0,0,0,0b11100,0b11111,0b00111};
+  lcd.createChar(7,browEight);
+
+  lcd.clear();
+  lcd.setCursor(2,1);
+  lcd.write(byte(0));
+  lcd.write(byte(1));
+  lcd.write(byte(2));
+  lcd.write(byte(3));
+  lcd.setCursor(10,1);
+  lcd.write(byte(4));
+  lcd.write(byte(5));
+  lcd.write(byte(6));
+  lcd.write(byte(7));
+}
+
+void ScaredBrows()
+{
+  byte browOne[8] = {0b00001,0b00011,0b01110,0b11100,0b11000,0b11000,0b10000};
+  lcd.createChar(0,browOne);
+  byte browTwo[8] = {0b11111,0b11000,0,0,0,0,0,0};
+  lcd.createChar(1,browTwo);
+  byte browThree[8] = {0b11111,0,0,0,0,0,0,0};
+  lcd.createChar(2,browThree);
+  byte browFour[8] = {0,0,0,0,0,0b10100,0b01000,0};
+  lcd.createChar(3,browFour);
+  byte browFive[8] = {0,0b01010,0b01010,0b00100,0,0,0,0};
+  lcd.createChar(4,browFive);
+  byte browSix[8] = {0b11111,0,0,0,0,0,0,0};
+  lcd.createChar(5,browSix);
+  byte browSeven[8] = {0b11111,0b00011,0,0,0,0,0,0};
+  lcd.createChar(6,browSeven);
+  byte browEight[8] = {0b10000,0b11000,0b01110,0b00111,0b00011,0b00011,0b00001};
+  lcd.createChar(7,browEight);
+
+  lcd.clear();
+  lcd.setCursor(2,0);
+  lcd.write(byte(0));
+  lcd.write(byte(1));
+  lcd.write(byte(2));
+  lcd.setCursor(11,0);
+  lcd.write(byte(5));
+  lcd.write(byte(6));
+  lcd.write(byte(7));
+  lcd.setCursor(1,1);
+  lcd.write(byte(3));
+  lcd.setCursor(15,0);
+  lcd.write(byte(4));
+  lcd.setCursor(9,1);
+  lcd.write(byte(3));
+  lcd.setCursor(3,1);
+  lcd.write(byte(4));
+}
 

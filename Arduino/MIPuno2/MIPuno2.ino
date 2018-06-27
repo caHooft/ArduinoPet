@@ -165,19 +165,19 @@ void Neck()
 {
   neck.write(180);
   delay(1000);
-  DistanceLeft = Distance();
+  DistanceLeft = DistanceAv();
   Serial.print(DistanceLeft);
   Serial.print("cm links, ");
   
   neck.write(90);
   delay(1000);
-  DistanceFront = Distance();
+  DistanceFront = DistanceAv();
   Serial.print(DistanceFront);
   Serial.print("cm voor en ");
   
   neck.write(0);
   delay(1000);
-  DistanceRight = Distance();
+  DistanceRight = DistanceAv();
   Serial.print(DistanceRight);
   Serial.println("cm rechts.");
   
@@ -193,10 +193,44 @@ int Distance()
   delayMicroseconds(10);
   digitalWrite(trig, LOW);
   float USvalue = pulseIn(echo, HIGH) / 29 / 2;
-  if(USvalue >= 200){
+  if(USvalue > 200){
     USvalue = 200;
   }
   return USvalue;
+}
+
+int DistanceAv(){
+  int average = 0;
+  byte highest = -1;
+  byte lowest = 201;
+  byte current;
+  for(byte i = 0; i < 6; i++){
+    current = Distance();
+    average += current;
+    if(current > highest){
+      highest = current;
+    }
+    if(current < lowest){
+      lowest = current;
+    }
+  }
+  average -= highest;
+  average -= lowest;
+  average = average / 4;
+  return average;
+}
+
+//Method for converting distance into milliseconds
+int ConvertDistance(int cm){
+  //Factor is time in milleseconds divided by distance in centimeters, eg. 1000/27=37
+  int ms = cm * 37;
+  return ms;
+}
+
+int ConvertDegrees(int degree){
+  //Factor is time in milleseconds divided by distance in centimeters, eg. 10000/422=24
+  int ms = degree * 24;
+  return ms;
 }
 
 //Method for random movement
@@ -218,9 +252,9 @@ void RandomMove()
     if(DistanceLeft >= DistanceFront && DistanceLeft >= DistanceRight)
     {
       digitalWrite(RightWheels, HIGH);
-      delay(2000);
+      delay(ConvertDegrees(90));
       digitalWrite(LeftWheels, HIGH);
-      delay(5000);
+      delay(ConvertDistance(50));
       digitalWrite(LeftWheels, LOW);
       digitalWrite(RightWheels, LOW);
     }
@@ -230,14 +264,14 @@ void RandomMove()
       if(DistanceLeft >= DistanceRight)
       {
         digitalWrite(RightWheels, HIGH);
-        delay(2000);
+        delay(ConvertDegrees(90));
         digitalWrite(RightWheels, LOW);
       }
       
       else
       {
         digitalWrite(LeftWheels, HIGH);
-        delay(2000);
+        delay(ConvertDegrees(90));
         digitalWrite(LeftWheels, LOW);
       }
     }
@@ -245,9 +279,9 @@ void RandomMove()
     else if(DistanceRight >= DistanceLeft && DistanceRight >= DistanceFront)
     {
       digitalWrite(LeftWheels, HIGH);
-      delay(2000);
+      delay(ConvertDegrees(90));
       digitalWrite(RightWheels, HIGH);
-      delay(5000);
+      delay(ConvertDistance(50));
       digitalWrite(RightWheels, LOW);
       digitalWrite(LeftWheels, LOW);
     }
@@ -257,7 +291,7 @@ void RandomMove()
   {
     digitalWrite(LeftWheels, HIGH);
     digitalWrite(RightWheels, HIGH);
-    delay(5000);
+    delay(ConvertDistance(50));
     digitalWrite(LeftWheels, LOW);
     digitalWrite(RightWheels, LOW);
   }

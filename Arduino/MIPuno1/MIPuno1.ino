@@ -9,7 +9,6 @@
  * SendMoods
  * LED1M
  * LED2M
- * InitWifi
  * Sounds
  * Sing
  * Buzz
@@ -22,13 +21,11 @@
 #include "pitches.h"
 
 //Declaring pins
-//Niet gebruiken ivm WiFi shield: 4, 7, 10, 11, 12, 13
 #define TH 2
 #define LED1 5
 #define LED2 6
 #define spkr 8
 #define tailpin 9
-
 #define LDR 16
 
 //Declaring some variables
@@ -101,7 +98,7 @@ void setup()
   pinMode(spkr, OUTPUT);
   pinMode(LDR, INPUT);
   pinMode(TH, INPUT);
-/*
+
   //Checking wire connection
   Wire.beginTransmission(9);
   Wire.write(1);
@@ -119,7 +116,7 @@ void setup()
   Wire.write(0);
   Wire.endTransmission();
   delay(200);
-*/}
+}
 
 void loop() 
 {  
@@ -280,12 +277,6 @@ void LED1M(int LEDvalue)
 void LED2M(byte b)
 {
   digitalWrite(LED2, b);
-}
-
-//Method for activating WiFi Shield
-void InitWiFi()
-{
-  
 }
 
 //Method for the making of sounds

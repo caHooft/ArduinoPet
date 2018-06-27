@@ -3,6 +3,7 @@
 
 //All methods
 /*
+ * Tail
  * ReadTH
  * ReadLight
  * SendMoods
@@ -16,20 +17,22 @@
 
 //Including libraries
 #include <Wire.h>
+#include <Servo.h>
 #include <dht.h>
 #include "pitches.h"
 
 //Declaring pins
 //Niet gebruiken ivm WiFi shield: 4, 7, 10, 11, 12, 13
 #define TH 2
-#define neckpin 3
 #define LED1 5
 #define LED2 6
 #define spkr 8
+#define tailpin 9
 
 #define LDR 16
 
 //Declaring some variables
+int servoValue;
 float lightvalue;
 float THvalue;
 int THtemp;
@@ -37,6 +40,7 @@ int THhumid;
 String song = "empty";
 
 //Declaring some hardware
+Servo tail;
 dht DHT;
 
 //Declaring song arrays
@@ -88,6 +92,8 @@ void setup()
   Serial.println("Arduino UNO 1 start");
   
   //Seting up some hardware
+  tail.attach(tailpin);
+  tail.write(90);
 
   //Initializing pins
   pinMode(LED1, OUTPUT);
@@ -125,6 +131,8 @@ void loop()
   ReadLight();
   Serial.println();
   ReadTH();
+  Serial.println();
+  Tail();
   Serial.println();
   Sounds(song);
   Serial.println();
@@ -202,6 +210,16 @@ void ReceiveClientData(String cmd)
      Serial.print("Change song to : ");
      Serial.println(song);
   }
+}
+
+//Method for sweeping the tail
+void Tail()
+{
+  tail.write(180);
+  delay(200);
+  tail.write(0);
+  delay(400);
+  tail.write(90);
 }
 
 //Method for measuring temperature & humidity

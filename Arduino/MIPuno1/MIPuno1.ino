@@ -100,8 +100,6 @@ void setup()
   pinMode(LED1, OUTPUT);
   pinMode(LED2, OUTPUT);
   pinMode(spkr, OUTPUT);
-  pinMode(trig, OUTPUT);
-  pinMode(echo, INPUT);
   pinMode(LDR, INPUT);
   pinMode(TH, INPUT);
 /*
@@ -134,8 +132,6 @@ void loop()
   ReadLight();
   Serial.println();
   ReadTH();
-  Serial.println();
-  Neck();
   Serial.println();
   Tail();
   Serial.println();

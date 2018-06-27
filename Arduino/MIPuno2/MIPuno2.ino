@@ -61,6 +61,8 @@ void setup()
   pinMode(LED, OUTPUT);
   pinMode(LeftWheels, OUTPUT);
   pinMode(RightWheels, OUTPUT);
+  pinMode(trig, OUTPUT);
+  pinMode(echo, INPUT);
 }
 
 void loop() 
@@ -71,6 +73,9 @@ void loop()
   Serial.println("-------------------------------------------------");
   Serial.println();
   Serial.println("Restart loop");
+  Serial.println();
+  Neck();
+  RandomMove();
   Serial.println();
 
   if(x == 0) 
@@ -97,18 +102,6 @@ void loop()
   {
     ToggleDir(x - 8);
   }
-
-  if(DistanceLeft != 0 && DistanceFront != 0 && DistanceRight != 0)
-  {
-    RandomMove();
-  }
-  
-  if(x >= 15)
-  {
-    SaveUS(x);
-
-    return;
-  }  
 }
 
 //Method for receiving commands
@@ -161,27 +154,21 @@ void Neck()
 {
   neck.write(180);
   delay(1000);
-  USdistance1 = Distance();
-  Serial.print(USdistance1);
-  Serial.println("cm links");
-  MtrSend(USdistance1);
-  Serial.println();
+  DistanceLeft = Distance();
+  Serial.print(DistanceLeft);
+  Serial.print("cm links, ");
   
   neck.write(90);
   delay(1000);
-  USdistance2 = Distance();
-  Serial.print(USdistance2);
-  Serial.println("cm voor");
-  MtrSend(USdistance2);
-  Serial.println();
+  DistanceFront = Distance();
+  Serial.print(DistanceFront);
+  Serial.print("cm voor en ");
   
   neck.write(0);
   delay(1000);
-  USdistance3 = Distance();
-  Serial.print(USdistance3);
-  Serial.println("cm rechts");
-  MtrSend(USdistance3);
-  Serial.println();
+  DistanceRight = Distance();
+  Serial.print(DistanceRight);
+  Serial.println("cm rechts.");
   
   neck.write(90);
 }
@@ -195,16 +182,18 @@ int Distance()
   delayMicroseconds(10);
   digitalWrite(trig, LOW);
   float USvalue = pulseIn(echo, HIGH) / 29 / 2;
-
+  if(USvalue >= 200){
+    USvalue = 200;
+  }
   return USvalue;
 }
 
 //Method for random movement
 void RandomMove()
 {
-  //0.8125 is 90
-  //1.625 is 180
-  //3.25 is 360
+  //0.8125 is 90 JK
+  //1.625 is 180 JK
+  //3.25 is 360 JK
 
   Serial.print("Left: ");
   Serial.println(DistanceLeft);

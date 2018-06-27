@@ -27,7 +27,7 @@
 #define RightWheels 8
 
 //Declaring some variables
-int x;
+int x; //x is de waarde die hij binnenkrijgt van de Wire
 int DistanceLeft = 0;
 int DistanceFront = 0;
 int DistanceRight = 0;
@@ -95,7 +95,7 @@ void loop()
   
   if(x >= 15)
   {
-    SaveUS();
+    SaveUS(x);
 
     return;
   }  
@@ -110,30 +110,29 @@ void ReceiveEvent(int bytes)
   Serial.println(x);
 }
 
-void SaveUS()
+void SaveUS(int xsurrogate)
 {
   if(DistanceLeft == 0)
   {
-    DistanceLeft = x;
+    DistanceLeft = xsurrogate;
   }
 
   else if(DistanceFront == 0)
   {
-    DistanceFront = x;
+    DistanceFront = xsurrogate;
   }
 
   else if(DistanceRight == 0)
   {
-    DistanceRight = x;
+    DistanceRight = xsurrogate;
   }
 
   else
   {
-    DistanceLeft = 0;
+    DistanceLeft = xsurrogate;
     DistanceFront = 0;
     DistanceRight = 0;
 
-    SaveUS();
   }
 }
 
@@ -166,7 +165,7 @@ void RandomMove()
       digitalWrite(RightWheels, HIGH);
       delay(2000);
       digitalWrite(LeftWheels, HIGH);
-      delay(1000);
+      delay(5000);
       digitalWrite(LeftWheels, LOW);
       digitalWrite(RightWheels, LOW);
     }
@@ -193,7 +192,7 @@ void RandomMove()
       digitalWrite(LeftWheels, HIGH);
       delay(2000);
       digitalWrite(RightWheels, HIGH);
-      delay(1000);
+      delay(5000);
       digitalWrite(RightWheels, LOW);
       digitalWrite(LeftWheels, LOW);
     }
@@ -203,7 +202,7 @@ void RandomMove()
   {
     digitalWrite(LeftWheels, HIGH);
     digitalWrite(RightWheels, HIGH);
-    delay(1000);
+    delay(5000);
     digitalWrite(LeftWheels, LOW);
     digitalWrite(RightWheels, LOW);
   }

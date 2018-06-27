@@ -62,7 +62,7 @@ namespace Domotica
         // Variables (components/controls)
         // Controls on GUI
         ToggleButton AIbutton, lightsToggle;
-        Button ForwardButton, LeftButton, RightButton, DownButton;
+        Button ForwardButton, LeftButton, RightButton, DownButton, UpdateButton;
         TextView MIPStatusText, HumidityValueText, LDRValueText, MIPSpeedValueText, TemperatureValueText;
         Spinner eyesSpinner, musicSpinner;
         SeekBar MipSpeedSlider;
@@ -114,6 +114,7 @@ namespace Domotica
             LeftButton = FindViewById<Button>(Resource.Id.moveLeftButton);
             RightButton = FindViewById<Button>(Resource.Id.moveRightButton);
             DownButton = FindViewById<Button>(Resource.Id.moveDownButton);
+            UpdateButton = FindViewById<Button>(Resource.Id.UpdateButton);
 
             if(MipSpeedSlider != null)
             {
@@ -142,6 +143,10 @@ namespace Domotica
             if(lightsToggle != null)
             {
                 lightsToggle.Click += (o, e) => OnLightsToggle(o, e);
+            }
+            if(UpdateButton != null)
+            {
+                UpdateButton.Click += (o,e) => UpdateValues();
             }
 
             if (eyesSpinner != null)
@@ -177,7 +182,7 @@ namespace Domotica
             EnergySaveTimer.Start();
 
             // uncomment to use with server
-            //server.Connect(this); 
+            server.Connect(this); 
         }
 
         private void OnTimeEvent(object source, ElapsedEventArgs e)
@@ -290,19 +295,48 @@ namespace Domotica
         public void SendStringToArduino(string cmd, TextView text)
         {
             // uncomment to use with server
-            //if (!server.Send(cmd)) server.Connect(this);
+            if (!server.Send(cmd)) server.Connect(this);
 
             if (cmd == "8")
             {
                 text.Text = "Sleeping";
                 return;
             }
+        }
 
-            /*string data = server.Receive();
-            if(data == "-")
+        public void UpdateValues()
+        {
+            if (!server.Send("Update")) server.Connect(this);
+
+            string data = server.Receive();
+            if (data == "-")
             {
                 Toast.MakeText(this, "No Info Received", ToastLength.Short);
-            }*/
+            }
+            int statusPos = data.IndexOf("Status");
+            int ldrPos = data.IndexOf("LDR");
+            int humidityPos = data.IndexOf("Humidity");
+            int temperaturePos = data.IndexOf("Temperature");
+            if (statusPos > 0)
+            {
+                statusPos += 6;
+                MIPStatusText.Text = data.Substring(statusPos, data.IndexOf("]") - statusPos);
+            }
+            if (ldrPos>0)
+            {
+                ldrPos += 3;
+                LDRValueText.Text = data.Substring(ldrPos, data.IndexOf("|") - ldrPos);
+            }
+            if (humidityPos>0)
+            {
+                humidityPos += 8;
+                HumidityValueText.Text = data.Substring(humidityPos, data.IndexOf("}") - humidityPos);
+            }
+            if (temperaturePos>0)
+            {
+                temperaturePos += 11;
+                TemperatureValueText.Text = data.Substring(temperaturePos, data.IndexOf(";") - temperaturePos);
+            }
         }
 
         //Close the connection (stop the threads) if the application stops.

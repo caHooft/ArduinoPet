@@ -24,27 +24,17 @@ namespace Domotica
         private const string IPADRESS = "192.168.43.133";
         private const string PORT = "80";
         Socket socket = null;                       // Socket   
-        Connector connector = null;                 // Connector (simple-mode or threaded-mode)
 
         public bool IsConnected
         {
-            get { return Convert.ToBoolean(socket.Available) && connector == null; }
+            get { return Convert.ToBoolean(socket.Available) && socket.Connected; }
         }
 
         public void Connect(MainActivity activity)
         {
             if (CheckValidIpAddress(IPADRESS) && CheckValidPort(PORT))
-                                   {
-                if (connector == null) // -> simple sockets
-                {
-                    ConnectSocket(IPADRESS, PORT, activity);
-                }
-                else // -> threaded sockets
-                {
-                    //Stop the thread If the Connector thread is already started.
-                    if (connector.CheckStarted()) connector.StopConnector();
-                    connector.StartConnector(IPADRESS, PORT);
-                }
+            {
+                ConnectSocket(IPADRESS, PORT, activity);                
             }
         }
 
@@ -56,14 +46,6 @@ namespace Domotica
             {
                 socket.Send(Encoding.ASCII.GetBytes(cmd));                 // Send toggle-command to the Arduino
                 hasSend = true;
-            }
-            else if (connector != null)// -> threaded sockets
-            {
-                if (connector.CheckStarted())
-                {
-                    connector.SendMessage(cmd);  // Send toggle-command to the Arduino
-                    hasSend = true;
-                }
             }
             return hasSend;
         }
@@ -149,13 +131,6 @@ namespace Domotica
 
         public void Stop()
         {
-            if (connector != null)
-            {
-                if (connector.CheckStarted())
-                {
-                    connector.StopConnector();
-                }
-            }
         }
     }
 }

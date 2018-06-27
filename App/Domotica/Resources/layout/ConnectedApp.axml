@@ -157,6 +157,14 @@
             android:backgroundTint="#b22c44"
             android:textColor="#ffffff" />
         <Button
+            android:layout_height="50dp"
+            android:layout_width="100dp"
+            android:id="@+id/UpdateButton"
+            android:text="Update Data"
+            android:layout_alignParentLeft="true"
+            android:backgroundTint="#b22c44"
+            android:textColor="#ffffff" />
+        <Button
             android:text="@string/move_up"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:layout_width="125dp"

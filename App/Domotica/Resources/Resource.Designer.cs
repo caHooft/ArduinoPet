@@ -102,41 +102,44 @@ namespace MIP
 			// aapt resource value: 0x7f060007
 			public const int TempValue = 2131099655;
 			
-			// aapt resource value: 0x7f06001f
-			public const int abort = 2131099679;
+			// aapt resource value: 0x7f060011
+			public const int UpdateButton = 2131099665;
 			
-			// aapt resource value: 0x7f06001d
-			public const int buttonChangePinState = 2131099677;
-			
-			// aapt resource value: 0x7f06001c
-			public const int buttonConnect = 2131099676;
-			
-			// aapt resource value: 0x7f06001a
-			public const int editTextIPAddress = 2131099674;
-			
-			// aapt resource value: 0x7f06001b
-			public const int editTextIPPort = 2131099675;
+			// aapt resource value: 0x7f060020
+			public const int abort = 2131099680;
 			
 			// aapt resource value: 0x7f06001e
-			public const int exit = 2131099678;
+			public const int buttonChangePinState = 2131099678;
+			
+			// aapt resource value: 0x7f06001d
+			public const int buttonConnect = 2131099677;
+			
+			// aapt resource value: 0x7f06001b
+			public const int editTextIPAddress = 2131099675;
+			
+			// aapt resource value: 0x7f06001c
+			public const int editTextIPPort = 2131099676;
+			
+			// aapt resource value: 0x7f06001f
+			public const int exit = 2131099679;
 			
 			// aapt resource value: 0x7f060009
 			public const int jemoder = 2131099657;
 			
-			// aapt resource value: 0x7f060014
-			public const int moveDownButton = 2131099668;
-			
-			// aapt resource value: 0x7f060012
-			public const int moveLeftButton = 2131099666;
+			// aapt resource value: 0x7f060015
+			public const int moveDownButton = 2131099669;
 			
 			// aapt resource value: 0x7f060013
-			public const int moveRightButton = 2131099667;
+			public const int moveLeftButton = 2131099667;
 			
-			// aapt resource value: 0x7f060011
-			public const int moveUpButton = 2131099665;
+			// aapt resource value: 0x7f060014
+			public const int moveRightButton = 2131099668;
 			
-			// aapt resource value: 0x7f060015
-			public const int relativeLayout1 = 2131099669;
+			// aapt resource value: 0x7f060012
+			public const int moveUpButton = 2131099666;
+			
+			// aapt resource value: 0x7f060016
+			public const int relativeLayout1 = 2131099670;
 			
 			// aapt resource value: 0x7f060000
 			public const int relativeLayout3 = 2131099648;
@@ -144,17 +147,17 @@ namespace MIP
 			// aapt resource value: 0x7f06000f
 			public const int relativeLayout4 = 2131099663;
 			
-			// aapt resource value: 0x7f060018
-			public const int textViewIPAddress = 2131099672;
-			
 			// aapt resource value: 0x7f060019
-			public const int textViewIPPort = 2131099673;
+			public const int textViewIPAddress = 2131099673;
 			
-			// aapt resource value: 0x7f060016
-			public const int textViewServer = 2131099670;
+			// aapt resource value: 0x7f06001a
+			public const int textViewIPPort = 2131099674;
 			
 			// aapt resource value: 0x7f060017
-			public const int textViewServerConnect = 2131099671;
+			public const int textViewServer = 2131099671;
+			
+			// aapt resource value: 0x7f060018
+			public const int textViewServerConnect = 2131099672;
 			
 			static Id()
 			{

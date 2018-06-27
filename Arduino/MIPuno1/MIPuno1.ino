@@ -3,11 +3,7 @@
 
 //All methods
 /*
- * MtrSend
  * Tail
- * Neck
- * Distance
- * ReadUS
  * ReadTH
  * ReadLight
  * SendMoods
@@ -34,15 +30,9 @@
 #define spkr 8
 #define tailpin 9
 
-#define trig 14
-#define echo 15
 #define LDR 16
 
 //Declaring some variables
-int USdistance1;
-int USdistance2;
-int USdistance3;
-long USLong;
 int servoValue;
 float lightvalue;
 float THvalue;
@@ -51,7 +41,6 @@ int THhumid;
 String song = "empty";
 
 //Declaring some hardware
-Servo neck;
 Servo tail;
 dht DHT;
 
@@ -104,8 +93,6 @@ void setup()
   Serial.println("Arduino UNO 1 start");
   
   //Seting up some hardware
-  neck.attach(neckpin);
-  neck.write(90);
   tail.attach(tailpin);
   tail.write(90);
 
@@ -230,23 +217,6 @@ void ReceiveClientData(String cmd)
   }
 }
 
-//Method for moving
-void MtrSend(int i)
-{
-  Serial.print("x at: ");
-  Serial.println(i);
-  Serial.println("Sending motor command");
-  
-  if(i > 255)  
-  {
-    i = 255;
-  }
-  
-  Wire.beginTransmission(9);  
-  Wire.write(i);
-  Wire.endTransmission();
-}
-
 //Method for sweeping the tail
 void Tail()
 {
@@ -256,50 +226,6 @@ void Tail()
   delay(400);
   tail.write(90);
 }
-
-//Method for sweeping the neck
-void Neck()
-{
-  neck.write(180);
-  delay(1000);
-  USdistance1 = Distance();
-  Serial.print(USdistance1);
-  Serial.println("cm links");
-  MtrSend(USdistance1);
-  Serial.println();
-  
-  neck.write(90);
-  delay(1000);
-  USdistance2 = Distance();
-  Serial.print(USdistance2);
-  Serial.println("cm voor");
-  MtrSend(USdistance2);
-  Serial.println();
-  
-  neck.write(0);
-  delay(1000);
-  USdistance3 = Distance();
-  Serial.print(USdistance3);
-  Serial.println("cm rechts");
-  MtrSend(USdistance3);
-  Serial.println();
-  
-  neck.write(90);
-}
-
-//Method for reading ultra sonic sensor and avoiding collisions
-int Distance()
-{
-  digitalWrite(trig, LOW);
-  delayMicroseconds(2);
-  digitalWrite(trig, HIGH);
-  delayMicroseconds(10);
-  digitalWrite(trig, LOW);
-  float USvalue = pulseIn(echo, HIGH) / 29 / 2;
-
-  return USvalue;
-}
-
 
 //Method for measuring temperature & humidity
 void ReadTH()

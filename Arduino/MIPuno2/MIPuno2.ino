@@ -1,8 +1,10 @@
 
 //All methods
 /*
- * SaveUS
  * LEDM
+ * SaveUS
+ * Neck
+ * Distance
  * RandomMove
  * ControlMove
  * ToggleDir
@@ -13,6 +15,7 @@
 
 //Including libraries
 #include <Wire.h>
+#include <Servo.h>
 #include <LiquidCrystal.h>
 
 //Declaring pins
@@ -22,9 +25,13 @@
 #define LCDd5 5
 #define LCDd6 6
 #define LCDd7 7
-#define LED 13
-#define LeftWheels 9
 #define RightWheels 8
+#define LeftWheels 9
+#define neckpin 10
+#define LED 13
+
+#define trig 14
+#define echo 15
 
 //Declaring some variables
 int x; //x is de waarde die hij binnenkrijgt van de Wire
@@ -33,6 +40,7 @@ int DistanceFront = 0;
 int DistanceRight = 0;
 
 //Declaring some hardware
+Servo neck;
 LiquidCrystal lcd(LCDrs, LCDen, LCDd4, LCDd5, LCDd6, LCDd7);
 
 void setup() 
@@ -43,6 +51,8 @@ void setup()
   Serial.println("Arduino UNO 2 start");
   
   //Seting up some hardware
+  neck.attach(neckpin);
+  neck.write(90);
   lcd.begin(16, 2);
   lcd.setCursor(0, 0);
   lcd.print("     __  __     ");
@@ -110,6 +120,16 @@ void ReceiveEvent(int bytes)
   Serial.println(x);
 }
 
+//Method for blinking the verification LED
+void LEDM(byte b)
+{
+  digitalWrite(LED, b);
+  
+  Serial.print("LED at: ");
+  Serial.println(b);
+}
+
+//Method for saving the US data
 void SaveUS(int xsurrogate)
 {
   if(DistanceLeft == 0)
@@ -136,12 +156,47 @@ void SaveUS(int xsurrogate)
   }
 }
 
-void LEDM(byte b)
+//Method for sweeping the neck
+void Neck()
 {
-  digitalWrite(LED, b);
+  neck.write(180);
+  delay(1000);
+  USdistance1 = Distance();
+  Serial.print(USdistance1);
+  Serial.println("cm links");
+  MtrSend(USdistance1);
+  Serial.println();
   
-  Serial.print("LED at: ");
-  Serial.println(b);
+  neck.write(90);
+  delay(1000);
+  USdistance2 = Distance();
+  Serial.print(USdistance2);
+  Serial.println("cm voor");
+  MtrSend(USdistance2);
+  Serial.println();
+  
+  neck.write(0);
+  delay(1000);
+  USdistance3 = Distance();
+  Serial.print(USdistance3);
+  Serial.println("cm rechts");
+  MtrSend(USdistance3);
+  Serial.println();
+  
+  neck.write(90);
+}
+
+//Method for reading ultra sonic sensor and avoiding collisions
+int Distance()
+{
+  digitalWrite(trig, LOW);
+  delayMicroseconds(2);
+  digitalWrite(trig, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trig, LOW);
+  float USvalue = pulseIn(echo, HIGH) / 29 / 2;
+
+  return USvalue;
 }
 
 //Method for random movement

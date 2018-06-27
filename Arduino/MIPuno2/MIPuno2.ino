@@ -165,19 +165,19 @@ void Neck()
 {
   neck.write(180);
   delay(1000);
-  DistanceLeft = DistanceAv();
+  DistanceLeft = Distance();
   Serial.print(DistanceLeft);
   Serial.print("cm links, ");
   
   neck.write(90);
   delay(1000);
-  DistanceFront = DistanceAv();
+  DistanceFront = Distance();
   Serial.print(DistanceFront);
   Serial.print("cm voor en ");
   
   neck.write(0);
   delay(1000);
-  DistanceRight = DistanceAv();
+  DistanceRight = Distance();
   Serial.print(DistanceRight);
   Serial.println("cm rechts.");
   
@@ -197,27 +197,6 @@ int Distance()
     USvalue = 200;
   }
   return USvalue;
-}
-
-int DistanceAv(){
-  int average = 0;
-  byte highest = -1;
-  byte lowest = 201;
-  byte current;
-  for(byte i = 0; i < 6; i++){
-    current = Distance();
-    average += current;
-    if(current > highest){
-      highest = current;
-    }
-    if(current < lowest){
-      lowest = current;
-    }
-  }
-  average -= highest;
-  average -= lowest;
-  average = average / 4;
-  return average;
 }
 
 //Method for converting distance into milliseconds
@@ -253,9 +232,11 @@ void RandomMove()
     {
       digitalWrite(RightWheels, HIGH);
       delay(ConvertDegrees(90));
-      digitalWrite(LeftWheels, HIGH);
-      delay(ConvertDistance(50));
-      digitalWrite(LeftWheels, LOW);
+      if(DistanceLeft >= 50){
+        digitalWrite(LeftWheels, HIGH);
+        delay(ConvertDistance(50));
+        digitalWrite(LeftWheels, LOW);
+      }
       digitalWrite(RightWheels, LOW);
     }
     
@@ -280,9 +261,11 @@ void RandomMove()
     {
       digitalWrite(LeftWheels, HIGH);
       delay(ConvertDegrees(90));
-      digitalWrite(RightWheels, HIGH);
-      delay(ConvertDistance(50));
-      digitalWrite(RightWheels, LOW);
+      if(DistanceRight >= 50){
+        digitalWrite(RightWheels, HIGH);
+        delay(ConvertDistance(50));
+        digitalWrite(RightWheels, LOW);
+      }
       digitalWrite(LeftWheels, LOW);
     }
   }
@@ -290,8 +273,13 @@ void RandomMove()
   else
   {
     digitalWrite(LeftWheels, HIGH);
-    digitalWrite(RightWheels, HIGH);
-    delay(ConvertDistance(50));
+    digitalWrite(RightWheels, HIGH);    
+      float val = DistanceFront;
+      if(val >= 100){
+          val -= 25;
+      }
+    val = random(50, val);
+    delay(ConvertDistance(val));
     digitalWrite(LeftWheels, LOW);
     digitalWrite(RightWheels, LOW);
   }

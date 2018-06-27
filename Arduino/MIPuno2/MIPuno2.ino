@@ -1,8 +1,11 @@
 
 //All methods
 /*
+ * SaveUS
+ * LEDM
  * RandomMove
  * ControlMove
+ * ToggleDir
  * Movement
  * ReceiveMood
  * ChangeMood
@@ -84,18 +87,18 @@ void loop()
   {
     ToggleDir(x - 8);
   }
+
+  if(DistanceLeft != 0 && DistanceFront != 0 && DistanceRight != 0)
+  {
+    RandomMove();
+  }
   
   if(x >= 15)
   {
     SaveUS();
 
     return;
-  }
-  
-  if(DistanceLeft != 0 && DistanceFront != 0 && DistanceRight != 0)
-  {
-    RandomMove();
-  }
+  }  
 }
 
 //Method for receiving commands

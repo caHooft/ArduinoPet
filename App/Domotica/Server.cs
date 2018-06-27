@@ -15,9 +15,9 @@ using System.Collections.Generic;
 using Android.Graphics;
 using System.Threading.Tasks;
 using System.Collections;
-using MIP;
+using Domotica;
 
-namespace Domotica
+namespace MIPAPP
 {
     class Server
     {
@@ -40,6 +40,8 @@ namespace Domotica
 
         public bool Send(string cmd)
         {
+            if (socket == null) return false;
+
             bool hasSend = false;
             cmd = "data" + cmd + "\r";
             if (socket.Connected)

@@ -3,7 +3,7 @@
   <PropertyGroup>
     <ProjectView>ShowAllFiles</ProjectView>
     <AndroidDesignerPreferredDevice>Nexus 4</AndroidDesignerPreferredDevice>
-    <SelectedDevice>OnePlus A6003</SelectedDevice>
+    <SelectedDevice>new_device</SelectedDevice>
     <DefaultDevice>new_device</DefaultDevice>
   </PropertyGroup>
 </Project>

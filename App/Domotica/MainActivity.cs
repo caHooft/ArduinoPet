@@ -50,9 +50,9 @@ using System.Collections.Generic;
 using Android.Graphics;
 using System.Threading.Tasks;
 using System.Collections;
-using MIP;
+using Domotica;
 
-namespace Domotica
+namespace MIPAPP
 {
     [Activity(Label = "@string/application_name", MainLauncher = true, Icon = "@drawable/icon", ScreenOrientation = Android.Content.PM.ScreenOrientation.Portrait)]
 
@@ -98,7 +98,7 @@ namespace Domotica
 
             // Set our view from the "main" layout resource (strings are loaded from Recources -> values -> Strings.xml)
             SetContentView(Resource.Layout.ConnectedApp);
-
+            
             // find and set the controls, so it can be used in the code
             eyesSpinner = FindViewById<Spinner>(Resource.Id.EyesDropdown);
             musicSpinner = FindViewById<Spinner>(Resource.Id.MusicDropdown);
@@ -249,7 +249,7 @@ namespace Domotica
                 spinner.GetItemAtPosition(e.Position), sounds[e.Position].Value);
             Toast.MakeText(this, toast, ToastLength.Long).Show();
 
-            string sendText = "ChangeSong" + sounds[e.Position].Value + "]";
+            string sendText = "ChooseSong" + sounds[e.Position].Value + "]";
             SendStringToArduino(sendText, MIPStatusText);
         }
 
@@ -313,15 +313,10 @@ namespace Domotica
             {
                 Toast.MakeText(this, "No Info Received", ToastLength.Short);
             }
-            int statusPos = data.IndexOf("Status");
+
             int ldrPos = data.IndexOf("LDR");
             int humidityPos = data.IndexOf("Humidity");
             int temperaturePos = data.IndexOf("Temperature");
-            if (statusPos > 0)
-            {
-                statusPos += 6;
-                MIPStatusText.Text = data.Substring(statusPos, data.IndexOf("]") - statusPos);
-            }
             if (ldrPos>0)
             {
                 ldrPos += 3;

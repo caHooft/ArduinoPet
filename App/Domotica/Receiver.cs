@@ -19,7 +19,7 @@ using System.Threading.Tasks;
 
 using Domotica;
 
-namespace Domotica
+namespace MIPAPP
 {
 	//Receive network packages from the Arduino.
 	public class Receiver

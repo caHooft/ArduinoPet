@@ -17,6 +17,7 @@ char buffer[100];
 String httpHeader;        
 int arg = 0;
 int val = 0; 
+int maxLength = 50;
 
 //Declaring some hardware
 EthernetServer server(80);
@@ -83,22 +84,14 @@ void loop()
           client.println();
           client.println("<!DOCTYPE HTML>");
           client.println("<HTML>");
-          client.println("<HEAD><TITLE>Hoogen-hooft</TITLE></HEAD>");
           client.println("<STYLE> body{width:1280px;font-family:verdana;background-color:LightBlue;} ");
           client.println("</STYLE>");
           client.println("<BODY>");
           client.println("<H4 style='color:Black'>Hoogen-hooft</H4>"); 
           client.println("<P style='font-size:80%; color:Black'>");
           
-          for (int i = 0; i <= 5; i++) 
-          {
-            strcpy_P(buffer, (char*)pgm_read_word(&(string_table[i]))); 
-            client.println(buffer); 
-            client.println("<br>");
-          }
-          
           client.println("</P>");
-
+/*
           if(sensorValuex > 600)
           {
             client.println("<P style='color:Red'>"); 
@@ -134,7 +127,7 @@ void loop()
             client.print(sensorValuey);
             client.println("</P>");
           }
-  
+*/  
           client.println("<P>");
           
           if (ParseHeader(httpHeader, arg, val)) 

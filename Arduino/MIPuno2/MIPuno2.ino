@@ -245,57 +245,57 @@ void RandomMove()
     if(DistanceLeft >= DistanceFront && DistanceLeft >= DistanceRight)
     {
       digitalWrite(RightWheels, HIGH);
+      ToggleDir(2);
       delay(ConvertDegrees(90));
       if(DistanceLeft >= 50){
         digitalWrite(LeftWheels, HIGH);
+        ToggleDir(1);
         delay(ConvertDistance(50));
         digitalWrite(LeftWheels, LOW);
       }
       digitalWrite(RightWheels, LOW);
+      ToggleDir(0);
     }
     
     else if(DistanceFront >= DistanceLeft && DistanceFront >= DistanceRight)
     {
       if(DistanceLeft >= DistanceRight)
       {
-        digitalWrite(RightWheels, HIGH);
+        ToggleDir(2);
         delay(ConvertDegrees(90));
-        digitalWrite(RightWheels, LOW);
+        ToggleDir(0);
       }
       
       else
       {
-        digitalWrite(LeftWheels, HIGH);
+        ToggleDir(3);
         delay(ConvertDegrees(90));
-        digitalWrite(LeftWheels, LOW);
+        ToggleDir(0);
       }
     }
     
     else if(DistanceRight >= DistanceLeft && DistanceRight >= DistanceFront)
     {
-      digitalWrite(LeftWheels, HIGH);
+      ToggleDir(3);
       delay(ConvertDegrees(90));
       if(DistanceRight >= 50){
-        digitalWrite(RightWheels, HIGH);
+        ToggleDir(1);
         delay(ConvertDistance(50));
-        digitalWrite(RightWheels, LOW);
       }
-      digitalWrite(LeftWheels, LOW);
+      ToggleDir(0);
     }
   }
   
   else
   {
-    digitalWrite(LeftWheels, HIGH);
-    digitalWrite(RightWheels, HIGH);    
+    ToggleDir(1);
       float val = DistanceFront;
       if(val >= 100){
           val -= 25;
       }
     val = random(50, val);
     delay(ConvertDistance(val));
-    digitalWrite(LeftWheels, LOW);
-    digitalWrite(RightWheels, LOW);
+    ToggleDir(0);
   }
 }
 

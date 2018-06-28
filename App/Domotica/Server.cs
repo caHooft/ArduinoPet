@@ -15,15 +15,15 @@ using System.Collections.Generic;
 using Android.Graphics;
 using System.Threading.Tasks;
 using System.Collections;
-using Domotica;
+using MIP;
 
 namespace MIPAPP
 {
     class Server
     {
-        private const string IPADRESS = "192.168.43.133";
+        private const string IPADRESS = "192.168.1.3";
         private const string PORT = "80";
-        Socket socket = null;                       // Socket   
+        Socket socket = null; // Socket   
 
         public bool IsConnected
         {
@@ -43,7 +43,7 @@ namespace MIPAPP
             if (socket == null) return false;
 
             bool hasSend = false;
-            cmd = "data" + cmd + "\r";
+            
             if (socket.Connected)
             {
                 socket.Send(Encoding.ASCII.GetBytes(cmd));                 // Send toggle-command to the Arduino

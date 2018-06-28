@@ -11,7 +11,7 @@
 
 [assembly: global::Android.Runtime.ResourceDesignerAttribute("MIP.Resource", IsApplication=true)]
 
-namespace MIPAPP
+namespace MIP
 {
 	
 	

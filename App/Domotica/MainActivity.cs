@@ -74,7 +74,7 @@ namespace MIPAPP
         int EnergySparingCooldown = 300;
 
         private List<KeyValuePair<string, int>> moods;
-        private List<KeyValuePair<string, string>> sounds;
+        private List<KeyValuePair<string, int>> sounds;
 
         protected override void OnCreate(Bundle bundle)
         {
@@ -82,18 +82,18 @@ namespace MIPAPP
 
             moods = new List<KeyValuePair<string, int>>
             {
-                new KeyValuePair<string, int>("Happy", 0),
-                new KeyValuePair<string, int>("Sad", 1),
-                new KeyValuePair<string, int>("Angry", 2),
-                new KeyValuePair<string, int>("Disgusted", 3),
-                new KeyValuePair<string, int>("Scared", 4)
+                new KeyValuePair<string, int>("Happy", 3),
+                new KeyValuePair<string, int>("Sad", 4),
+                new KeyValuePair<string, int>("Angry", 5),
+                new KeyValuePair<string, int>("Disgusted", 6),
+                new KeyValuePair<string, int>("Scared", 7)
             };
 
-            sounds = new List<KeyValuePair<string, string>>
+            sounds = new List<KeyValuePair<string, int>>
             {
-                new KeyValuePair<string, string>("Empty", "empty"),
-                new KeyValuePair<string, string>("Mario", "mario"),
-                new KeyValuePair<string, string>("Underworld", "underworld")
+                new KeyValuePair<string, int>("Empty", 0),
+                new KeyValuePair<string, int>("Mario", 1),
+                new KeyValuePair<string, int>("Underworld", 2)
             };
 
             // Set our view from the "main" layout resource (strings are loaded from Recources -> values -> Strings.xml)
@@ -196,7 +196,7 @@ namespace MIPAPP
                     EnergySaveTimer.Enabled = false;
 
                     Toast.MakeText(this, "Energy Saving Mode Enabled!", ToastLength.Long).Show();
-                    SendStringToArduino("8", MIPStatusText);
+                    SendStringToArduino("6", MIPStatusText);
                 }                
             });
         }
@@ -209,7 +209,7 @@ namespace MIPAPP
             {
                 int value = slider.Progress;
                 MIPSpeedValueText.Text = "MIP Speed = " + value;
-                string sendText = "MIPSpeed" + value + "]";
+                string sendText = "0" + value;
                 SendStringToArduino(sendText, MIPStatusText);
                 Toast.MakeText(this, sendText, ToastLength.Long).Show();
             }
@@ -220,7 +220,7 @@ namespace MIPAPP
             Button toggle = (Button)sender;
             if (toggle != null)
             {
-                string sendText = "MotorCommand" + val;
+                string sendText = "1" + val;
                 SendStringToArduino(sendText, MIPStatusText);
                 Toast.MakeText(this, sendText, ToastLength.Long).Show();
             }
@@ -235,7 +235,7 @@ namespace MIPAPP
                 spinner.GetItemAtPosition(e.Position), moods[e.Position].Value);
             Toast.MakeText(this, toast, ToastLength.Long).Show();
 
-            string sendText = "ChangeMood" + moods[e.Position].Value;
+            string sendText = "2" + moods[e.Position].Value;
             SendStringToArduino(sendText, MIPStatusText);
             MIPStatusText.Text = spinner.GetItemAtPosition(e.Position).ToString();
         }
@@ -249,7 +249,7 @@ namespace MIPAPP
                 spinner.GetItemAtPosition(e.Position), sounds[e.Position].Value);
             Toast.MakeText(this, toast, ToastLength.Long).Show();
 
-            string sendText = "ChooseSong" + sounds[e.Position].Value + "]";
+            string sendText = "3" + sounds[e.Position].Value;
             SendStringToArduino(sendText, MIPStatusText);
         }
 
@@ -272,7 +272,7 @@ namespace MIPAPP
             ToggleButton toggle = (ToggleButton)sender;
             if(toggle != null)
             {
-                string sendText = "LightsToggle" + Convert.ToInt32(toggle.Checked);
+                string sendText = "4" + Convert.ToInt32(toggle.Checked);
 
                 SendStringToArduino(sendText, MIPStatusText);
                 Toast.MakeText(this, sendText, ToastLength.Long).Show();
@@ -284,7 +284,7 @@ namespace MIPAPP
             ToggleButton toggle = (ToggleButton)sender;
             if(toggle != null)
             {
-                string sendText = "AIToggle" + Convert.ToInt32(toggle.Checked);
+                string sendText = "5" + Convert.ToInt32(toggle.Checked);
                 EnergySparing = !toggle.Checked;
 
                 SendStringToArduino(sendText, MIPStatusText);
@@ -297,7 +297,7 @@ namespace MIPAPP
             // uncomment to use with server
             if (!server.Send(cmd)) server.Connect(this);
 
-            if (cmd == "8")
+            if (cmd == "6")
             {
                 text.Text = "Sleeping";
                 return;
@@ -306,7 +306,7 @@ namespace MIPAPP
 
         public void UpdateValues()
         {
-            if (!server.Send("Update")) server.Connect(this);
+            if (!server.Send("7")) server.Connect(this);
 
             string data = server.Receive();
             if (data == "-")

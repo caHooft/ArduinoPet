@@ -87,7 +87,8 @@ void SendDataToApp(EthernetClient client, char buffer[128])
   String bufferString = String(buffer);
   
    Serial.print(bufferString);
-   if(bufferString == String("7")){
+   if(bufferString == String("7"))
+   {
     String cmd = "data";
     cmd += "LDR"+ (String)lightvalue + "|";
     cmd += "Humidity"+ (String)THhumid +"}"; 

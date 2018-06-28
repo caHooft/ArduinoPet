@@ -50,7 +50,7 @@ using System.Collections.Generic;
 using Android.Graphics;
 using System.Threading.Tasks;
 using System.Collections;
-using Domotica;
+using MIP;
 
 namespace MIPAPP
 {

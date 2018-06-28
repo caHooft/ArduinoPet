@@ -83,7 +83,7 @@ void loop()
   Serial.println();
   Serial.println("Restart loop");
   Serial.println();
-  Serial.println();
+  
   Tail();
   Serial.println();
 
@@ -124,6 +124,9 @@ void loop()
       ToggleDir(x - 8);
     }
   }
+
+  Serial.println();
+  Tail();
 }
 
 //Method for receiving commands

@@ -23,8 +23,8 @@
 
 //Declaring pins
 #define TH 3
-#define LED1 5
-#define LED2 6
+#define LED1 6
+#define LED2 5
 #define spkr 8
 #define LDR 16
 
@@ -97,7 +97,8 @@ void setup()
   pinMode(spkr, OUTPUT);
   pinMode(LDR, INPUT);
   pinMode(TH, INPUT);
-
+  digitalWrite(LED1, HIGH);
+  
   WireSend(1);
   delay(100);
   WireSend(0);
@@ -251,9 +252,9 @@ void ReceiveRFData(NewRemoteCode receivedCode)
 //Method for sending Wire
 void WireSend(int var)
 {
-  Wire.beginTransmission(9);
+  /*Wire.beginTransmission(9);
   Wire.write(var);
-  Wire.endTransmission();
+  Wire.endTransmission();*/
 }
 
 //Method for measuring temperature & humidity
@@ -292,12 +293,12 @@ void ReadLight()
 //Method for controlling LED batch 1
 void LED1M(int LEDvalue)
 {
-  if(LEDvalue = 0)
+  if(LEDvalue == 0)
   {
     digitalWrite(LED1, LOW);
   }
 
-  if(LEDvalue = 1)
+  if(LEDvalue == 1)
   {
     digitalWrite(LED1, HIGH);
   }

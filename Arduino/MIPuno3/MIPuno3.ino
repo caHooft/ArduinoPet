@@ -48,12 +48,6 @@ void setup()
 
 void loop() 
 {
-  Serial.println();
-  Serial.println("-------------------------------------------------");
-  Serial.println();
-  Serial.println("Restart loop");
-  Serial.println();
-  
   if(!connected) return;
   EthernetClient ethernetClient = server.available();
  
@@ -122,6 +116,5 @@ void SendRFInfo(int cmd)
   Serial.println(cmd);
 
   NewRemoteTransmitter transmitter(cmd, 9, 266);  
-  transmitter.sendUnit(5, 1); 
-  delay(100); 
+  transmitter.sendUnit(1, 0); 
 }

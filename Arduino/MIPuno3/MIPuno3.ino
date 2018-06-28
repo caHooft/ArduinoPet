@@ -1,200 +1,88 @@
-
-//All methods
-/*
- * ParseHeader
- */
-
-//Including libraries
+#include <NewRemoteTransmitter.h>
+#include <NewRemoteReceiver.h>
 #include <SPI.h>
 #include <Ethernet.h>
 
-//Declaring pins
-//Ethernet shield at pins 10 through 13
-
-//Declaring some variables
+//vars
+byte mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };   // Ethernet adapter shield S. Oosterhaven
 IPAddress ip(192, 168, 1, 3);
-char buffer[100];  
-String httpHeader;        
-int arg = 0;
-int val = 0; 
-int maxLength = 50;
-
-//Declaring some hardware
 EthernetServer server(80);
+bool connected =false;
 
-//Declaring some arrays
-byte mac[] = 
-{ 
-  0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED 
-};  
+float lightvalue;
+float THvalue;
+int THtemp;
+int THhumid;
 
 void setup() 
 {
-  Serial.begin(9600);
-  Serial.println("Arduino UNO 3 Start");
+  //Serial.begin(9600);  
+  Serial.begin(115200);  
 
-  DDRD = 0xFC;     
-  DDRB = 0x3F;
-
-  //Setting up some hardware
+  NewRemoteReceiver::init(0, 2, ReceiveRFData);
+  Serial.println("started");
+  
   Ethernet.begin(mac, ip);
-  server.begin();
-   
-  Serial.print("Server is at "); 
+  Serial.print("Listening on adress: ");
   Serial.println(Ethernet.localIP());
+  server.begin();
+  connected  = true;  
 }
 
 
 void loop() 
 {
-  Serial.println("-------------------------------------------------");
-  Serial.println();
-  Serial.println("Restart loop");
-  Serial.println();
+  if(!connected) return;
+  EthernetClient ethernetClient = server.available();
+ 
+  if(!ethernetClient){ Serial.println("No Connection"); return;}
   
-  EthernetClient client = server.available(); 
-
-  if (client) 
-  {
-    Serial.println("New client connected");
-    
-    boolean currentLineIsBlank = true;
-    
-    while (client.connected()) 
-    {
-      if (client.available()) 
-      {
-        char c = client.read();
-     
-        if (httpHeader.length() < maxLength) 
-        {
-          httpHeader += c;
-        }
-        
-        if (c == '\n' && currentLineIsBlank) 
-        {
-          httpHeader.replace(" HTTP/1.1", ";");          
-          httpHeader.trim();                             
-          Serial.println(httpHeader);                         
-          
-          client.println("HTTP/1.1 200 OK");
-          client.println("Content-Type: text/html");
-          client.println("Connection: close");   
-          client.println("Refresh: 3");
-          client.println();
-          client.println("<!DOCTYPE HTML>");
-          client.println("<HTML>");
-          client.println("<STYLE> body{width:1280px;font-family:verdana;background-color:LightBlue;} ");
-          client.println("</STYLE>");
-          client.println("<BODY>");
-          client.println("<H4 style='color:Black'>Hoogen-hooft</H4>"); 
-          client.println("<P style='font-size:80%; color:Black'>");
-          
-          client.println("</P>");
-/*
-          if(sensorValuex > 600)
-          {
-            client.println("<P style='color:Red'>"); 
-            client.print(sensorPinx);
-            client.print(": ");
-            client.print(sensorValuex);
-            client.println("</P>");
-          }
-
-          else
-          {
-            client.println("<P style='color:White'>"); 
-            client.print(sensorPinx);
-            client.print(": ");
-            client.print(sensorValuex);
-            client.println("</P>");
-          }
-
-          if(sensorValuey > 600)
-          {
-            client.println("<P style='color:Red'>"); 
-            client.print(sensorPiny);
-            client.print(": ");
-            client.print(sensorValuey);
-            client.println("</P>");
-          }
-
-          else
-          {
-            client.println("<P style='color:White'>"); 
-            client.print(sensorPiny);
-            client.print(": ");
-            client.print(sensorValuey);
-            client.println("</P>");
-          }
-*/  
-          client.println("<P>");
-          
-          if (ParseHeader(httpHeader, arg, val)) 
-          {
-              Serial.println(httpHeader);
-              Serial.println(arg);
-              Serial.println(val);
-              
-              digitalWrite(arg, val);
-              
-              client.print("Pin ");
-              client.print(arg); 
-              client.print(" = "); 
-              client.println(val);
-          }
-          
-          else 
-          {
-            client.println("No IO-pins to control");
-          }
-          
-          client.println("</P>");
-          
-          client.println("</BODY>");
-          client.println("</HTML>");
-          break;
-        }
-        
-        if (c == '\n') \
-        {
-          currentLineIsBlank = true;
-        }
-        else if (c != '\r') 
-        {
-          currentLineIsBlank = false;
-        }
-      }
+  while(ethernetClient.connected()){
+    char buffer[128];
+    int count =0;
+    while(ethernetClient.available()){
+      buffer[count ++] = ethernetClient.read();
     }
-    
-    delay(1);
-    client.stop();
-    httpHeader = "";
-    
-    Serial.println("Client disconnected");
+    buffer[count]  = '\0';
+    if(count > 0){
+      SendDataToApp(ethernetClient, buffer);
+    }
   }
 }
 
-bool ParseHeader(String header, int &a, int &v)
-{
-  String astring = header.substring(14, 15);
-  String vstring = header.substring(16, 17);
-
-  Serial.println(astring);
-  Serial.println(vstring);
+void SendDataToApp(EthernetClient client, char buffer[128]){  
+  String bufferString = String(buffer);
   
-  a = astring.toInt();
-  v = vstring.toInt();
-  
-  if((a == 8 || a == 9) && (v == 0 || v == 1))
-  {
-    return true;
-  }
-
-  else
-  {
-    return false;
-  }
+   Serial.print(bufferString);
+   if(bufferString == String("7")){
+    String cmd = "data";
+    cmd += "LDR"+ (String)lightvalue + "|";
+    cmd += "Humidity"+ (String)THhumid +"}"; 
+    cmd += "Temperature" + (String)THtemp +";";
+    client.print(cmd);
+    Serial.println(cmd); 
+    return;  
+   }
+   SendRFInfo(bufferString.toInt());
 }
 
+void ReceiveRFData(NewRemoteCode receivedCode) {
+  Serial.print("cmd  = "); // command
+  
+  char cmd = String(receivedCode.address).charAt(0);
+  Serial.print(cmd);
+  Serial.print(" val = ");
+  int val = String(receivedCode.address).substring(1).toInt();
+  Serial.println(val);
+  if(cmd == '7') lightvalue = val;
+  if(cmd == '8') THhumid = val;
+  if(cmd == '9') THtemp = val;
+}
 
+void SendRFInfo(int cmd){  
+  Serial.print("Sending Data = ");
+  Serial.println(cmd);
+  NewRemoteTransmitter transmitter(cmd, 9, 266);  
+  transmitter.sendUnit(5, 1); 
+  delay(100); 
+}

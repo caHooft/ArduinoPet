@@ -15,13 +15,15 @@
  */
 
 //Including libraries
+#include <NewRemoteTransmitter.h>
+#include <NewRemoteReceiver.h>
 #include <Wire.h>
 #include <Servo.h>
 #include <dht.h>
 #include "pitches.h"
 
 //Declaring pins
-#define TH 2
+#define TH 3
 #define LED1 5
 #define LED2 6
 #define spkr 8
@@ -92,30 +94,14 @@ void setup()
   tail.attach(tailpin);
   tail.write(90);
 
+  NewRemoteReceiver::init(0, 2, ReceiveRFData);
+  
   //Initializing pins
   pinMode(LED1, OUTPUT);
   pinMode(LED2, OUTPUT);
   pinMode(spkr, OUTPUT);
   pinMode(LDR, INPUT);
   pinMode(TH, INPUT);
-
-  //Checking wire connection
-  Wire.beginTransmission(9);
-  Wire.write(1);
-  Wire.endTransmission();
-  delay(200);
-  Wire.beginTransmission(9);
-  Wire.write(0);
-  Wire.endTransmission();
-  delay(200);
-  Wire.beginTransmission(9);
-  Wire.write(1);
-  Wire.endTransmission();
-  delay(200);
-  Wire.beginTransmission(9);
-  Wire.write(0);
-  Wire.endTransmission();
-  delay(200);
 }
 
 void loop() 
@@ -133,47 +119,57 @@ void loop()
   Serial.println();
   Sounds(song);
   Serial.println();
+  SendRFData();
+}
+
+void SendRFData()
+{
+  int val = String(7 + String(lightvalue)).toInt();
+  NewRemoteTransmitter transmitter(val, 11, 266);  
+  transmitter.sendUnit(5, 1);  
+  val = String(8 + String(THhumid)).toInt();
+  NewRemoteTransmitter transmitter2(val, 11, 266);  
+  transmitter2.sendUnit(5, 1);  
+  val = String(9 + String(THtemp)).toInt();
+  NewRemoteTransmitter transmitter3(val, 11, 266);   
+  transmitter3.sendUnit(5, 1);  
+  delay(1000);
 }
 
 //Method for rerceiving lient data
-void ReceiveClientData(String cmd)
-{
-  Serial.print("Receiving data from app");
+void ReceiveRFData(NewRemoteCode receivedCode)
+{  
+  Serial.print("Getting Data");
+  char cmd = String(receivedCode.address).charAt(0);
+  int val = String(receivedCode.address).substring(1).toInt();
   
-  int LEDvaluecmd = cmd.indexOf("LightsToggle");
-  int mtrvaluecmd = cmd.indexOf("MotorBool");
-  int mtrdireccmd = cmd.indexOf("MotorCommand");
-  int mipspeedcmd = cmd.indexOf("MIPSpeed");
-  int moodchangecmd = cmd.indexOf("MoodChange");
-  int choosesongcmd = cmd.indexOf("ChooseSong");
+  Serial.print("cmd = "); 
+  Serial.print(cmd);
+  Serial.print(" val = ");
+  Serial.println(val);  
 
-  if(LEDvaluecmd > 0) 
+  if(cmd == '0')
   {
-     int LEDvalue = cmd[LEDvaluecmd +1];
-     
-     Serial.print("Send LED3 command");
-     
-     LED1M(LEDvalue);
-  }
+     int mipspeeed = val;
+  }  
 
-  if(mtrvaluecmd > 0)
+  if(cmd == '1')
   {
-    int mtrbool = cmd[mtrvaluecmd + 1];
+    int mtrbool = bool(val);
 
     if(!mtrbool)
-    {
+    {/*
       if(mtrdireccmd > 0)
       {
-        int mtrdirec = cmd[mtrdireccmd + 1];
+        int mtrdirec = val;
 
         Serial.print("Send motor command");  
 
         Wire.beginTransmission(9);
         Wire.write(mtrdirec);                       //Values between 8 and 11
         Wire.endTransmission();
-      }
+      }*/
     }
-
     else
     {
       Serial.print("Send motor command");
@@ -183,29 +179,40 @@ void ReceiveClientData(String cmd)
       Wire.endTransmission();
     }
   }
-
-  if(mipspeedcmd > 0)
-  {
-     int endValue = cmd.indexOf("]");
-     int mipspeeed = cmd.substring(mipspeedcmd+8, endValue).toInt();
-  }
   
-  if(moodchangecmd > 0)
+  if(cmd == '2') // Lights toggle
   {
-    int moodchange = cmd[moodchangecmd + 1];
-
-    Serial.print("Send mood command");
-
-    Wire.beginTransmission(9);
-    Wire.write(moodchange);                           //Values between 3 and 7
-    Wire.endTransmission();
-  } 
-
-  if(choosesongcmd> 0) {    
-     int endValue = cmd.indexOf("]");
-     String song = cmd.substring(choosesongcmd+10, endValue);
+    Serial.print("Send mood command ");
+    Serial.println(val);
+    //Wire.beginTransmission(9);
+    //Wire.write(val);                           //Values between 3 and 7
+    //Wire.endTransmission();
+  }
+    
+  if(cmd == '3') // Lights toggle 
+  {
+    if(val ==0) song = "empty";
+    if(val ==1) song = "mario";
+    if(val ==2) song = "underworld";
      Serial.print("Change song to : ");
      Serial.println(song);
+  }  
+  
+  if(cmd == '4') // Lights toggle
+  {     
+     Serial.print("Send LED3 command");
+     Serial.println(val);
+     
+     LED1M(val);
+  }  
+  if(cmd == '5')
+  {    
+     Serial.print("Set AI to : ");
+     Serial.println(val);
+  }
+  if(cmd == '6')
+  {
+    Serial.println("Mip Went to bed Good night");
   }
 }
 

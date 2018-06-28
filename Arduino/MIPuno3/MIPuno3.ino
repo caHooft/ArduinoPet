@@ -116,5 +116,5 @@ void SendRFInfo(int cmd)
   Serial.println(cmd);
 
   NewRemoteTransmitter transmitter(cmd, 9, 266);  
-  transmitter.sendUnit(1, 0); 
+  transmitter.sendUnit(5, 1); 
 }

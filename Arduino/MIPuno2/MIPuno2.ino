@@ -31,12 +31,11 @@
 #define neckpin 10
 #define tailpin 11
 #define LED 13
-
 #define trig 14
 #define echo 15
 
 //Declaring some variables
-int x; //x is de waarde die hij binnenkrijgt van de Wire
+int x;
 int DistanceLeft = 0;
 int DistanceFront = 0;
 int DistanceRight = 0;
@@ -102,7 +101,8 @@ void loop()
     AION = true;
   }
   
-  if(x == 13){
+  if(x == 13)
+  {
     AION = false;
   }
     
@@ -112,16 +112,27 @@ void loop()
   }
   
 
-  if(AION){
+  if(AION)
+  {
     Serial.println();
     Neck();
     Serial.println();
     RandomMove();
   }
+  
   else if(!AION){
     if(x >= 9 && x <= 12)
     {
-      ToggleDir(x - 8);
+      switch(x)
+      {
+        case 9:
+        ToggleDir();
+        break;
+        case 10:
+        ToggleDir();
+        break;
+        
+      }
     }
   }
 
@@ -206,10 +217,14 @@ int Distance()
   digitalWrite(trig, HIGH);
   delayMicroseconds(10);
   digitalWrite(trig, LOW);
+  
   float USvalue = pulseIn(echo, HIGH) / 29 / 2;
-  if(USvalue > 200){
+  
+  if(USvalue > 200)
+  {
     USvalue = 200;
   }
+  
   return USvalue;
 }
 
@@ -244,16 +259,15 @@ void RandomMove()
   {
     if(DistanceLeft >= DistanceFront && DistanceLeft >= DistanceRight)
     {
-      digitalWrite(RightWheels, HIGH);
       ToggleDir(2);
       delay(ConvertDegrees(90));
-      if(DistanceLeft >= 50){
-        digitalWrite(LeftWheels, HIGH);
+      
+      if(DistanceLeft >= 50)
+      {
         ToggleDir(1);
         delay(ConvertDistance(50));
-        digitalWrite(LeftWheels, LOW);
       }
-      digitalWrite(RightWheels, LOW);
+      
       ToggleDir(0);
     }
     
@@ -278,10 +292,12 @@ void RandomMove()
     {
       ToggleDir(3);
       delay(ConvertDegrees(90));
-      if(DistanceRight >= 50){
+      if(DistanceRight >= 50)
+      {
         ToggleDir(1);
         delay(ConvertDistance(50));
       }
+      
       ToggleDir(0);
     }
   }
@@ -289,10 +305,12 @@ void RandomMove()
   else
   {
     ToggleDir(1);
-      float val = DistanceFront;
-      if(val >= 100){
-          val -= 25;
-      }
+    float val = DistanceFront;
+    if(val >= 100)
+    {
+        val -= 25;
+    }
+    
     val = random(50, val);
     delay(ConvertDistance(val));
     ToggleDir(0);
@@ -302,7 +320,7 @@ void RandomMove()
 //Method for controlled movement
 void ControlMove(int dir)
 {
-
+  
 }
 
 //Method for toggling the wheels

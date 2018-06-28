@@ -340,27 +340,27 @@ void ChangeMood(int i)
 {
   if(i == 3)
   {
-    
+    HappyBrows();
   }
 
   if(i == 4)
   {
-    
+    SadBrows();
   }
 
   if(i == 5)
   {
-    
+    AngryBrows();
   }
 
   if(i == 6)
   {
-    
+    DisgustedBrows();
   }
 
   if(i == 7)
   {
-    
+    ScaredBrows();
   }
 }
 

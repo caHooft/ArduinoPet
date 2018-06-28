@@ -3,7 +3,7 @@
 
 //All methods
 /*
- * Tail
+ * SendRFData
  * ReadTH
  * ReadLight
  * SendMoods
@@ -93,7 +93,6 @@ void setup()
   //Seting up some hardware
   tail.attach(tailpin);
   tail.write(90);
-
   NewRemoteReceiver::init(0, 2, ReceiveRFData);
   
   //Initializing pins

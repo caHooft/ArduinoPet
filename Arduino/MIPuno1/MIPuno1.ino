@@ -1,12 +1,12 @@
 
-//https://extramaster.net/tools/midiToArduino/
 
 //All methods
 /*
  * SendRFData
+ * ReceiveRFData
+ * WireSend
  * ReadTH
  * ReadLight
- * SendMoods
  * LED1M
  * LED2M
  * Sounds
@@ -18,7 +18,6 @@
 #include <NewRemoteTransmitter.h>
 #include <NewRemoteReceiver.h>
 #include <Wire.h>
-#include <Servo.h>
 #include <dht.h>
 #include "pitches.h"
 
@@ -27,11 +26,11 @@
 #define LED1 5
 #define LED2 6
 #define spkr 8
-#define tailpin 9
 #define LDR 16
 
 //Declaring some variables
-int servoValue;
+bool sleep = false;
+bool AION = true;
 float lightvalue;
 float THvalue;
 int THtemp;
@@ -39,7 +38,6 @@ int THhumid;
 String song = "empty";
 
 //Declaring some hardware
-Servo tail;
 dht DHT;
 
 //Declaring song arrays
@@ -91,8 +89,6 @@ void setup()
   Serial.println("Arduino UNO 1 start");
   
   //Seting up some hardware
-  tail.attach(tailpin);
-  tail.write(90);
   NewRemoteReceiver::init(0, 2, ReceiveRFData);
   
   //Initializing pins
@@ -101,6 +97,15 @@ void setup()
   pinMode(spkr, OUTPUT);
   pinMode(LDR, INPUT);
   pinMode(TH, INPUT);
+
+  WireSend(1);
+  delay(100);
+  WireSend(0);
+  delay(100);
+  WireSend(1);
+  delay(100);
+  WireSend(0);
+  delay(100);
 }
 
 void loop() 
@@ -114,24 +119,27 @@ void loop()
   Serial.println();
   ReadTH();
   Serial.println();
-  Tail();
-  Serial.println();
-  Sounds(song);
+  Sounds();
   Serial.println();
   SendRFData();
 }
 
 void SendRFData()
 {
-  int val = String(7 + String(lightvalue)).toInt();
+  int val;
+
+  val = String(7 + String(lightvalue)).toInt();
   NewRemoteTransmitter transmitter(val, 11, 266);  
   transmitter.sendUnit(5, 1);  
+
   val = String(8 + String(THhumid)).toInt();
   NewRemoteTransmitter transmitter2(val, 11, 266);  
-  transmitter2.sendUnit(5, 1);  
+  transmitter2.sendUnit(5, 1); 
+
   val = String(9 + String(THtemp)).toInt();
   NewRemoteTransmitter transmitter3(val, 11, 266);   
   transmitter3.sendUnit(5, 1);  
+
   delay(1000);
 }
 
@@ -146,92 +154,117 @@ void ReceiveRFData(NewRemoteCode receivedCode)
   Serial.print(cmd);
   Serial.print(" val = ");
   Serial.println(val);  
-
-  if(cmd == '0')
+  
+  if(cmd != 6)
   {
-     int mipspeeed = val;
+    sleep = false;
+    WireSend(14);
+  }
+
+  if(cmd == '0') //Speed toggle
+  {
+     int mipspeed = val;
+
+     if(mipspeed > 15)
+     {
+       WireSend(mipspeed);
+     }
   }  
 
-  if(cmd == '1')
-  {
+  if(cmd == '1') //Motor toggle
+  {/*
     int mtrbool = bool(val);
 
     if(!mtrbool)
-    {/*
+    {
       if(mtrdireccmd > 0)
       {
         int mtrdirec = val;
 
         Serial.print("Send motor command");  
 
-        Wire.beginTransmission(9);
-        Wire.write(mtrdirec);                       //Values between 8 and 11
-        Wire.endTransmission();
-      }*/
+        WireSend(mtrdirec);
+      }
     }
+
     else
     {
       Serial.print("Send motor command");
       
-      Wire.beginTransmission(9);
-      Wire.write(2);                                  //Values between 2
-      Wire.endTransmission();
+      WireSend(2);
     }
-  }
+  */}
   
-  if(cmd == '2') // Lights toggle
+  if(cmd == '2') //Mood toggle
   {
-    Serial.print("Send mood command ");
+    Serial.print("Set mood to: ");
     Serial.println(val);
-    //Wire.beginTransmission(9);
-    //Wire.write(val);                           //Values between 3 and 7
-    //Wire.endTransmission();
+
+    WireSend(val);
   }
     
-  if(cmd == '3') // Lights toggle 
+  if(cmd == '3') //Song toggle 
   {
-    if(val ==0) song = "empty";
-    if(val ==1) song = "mario";
-    if(val ==2) song = "underworld";
-     Serial.print("Change song to : ");
-     Serial.println(song);
+    if(val == 0) song = "empty";
+    if(val == 1) song = "mario";
+    if(val == 2) song = "underworld";
+
+    Serial.print("Change song to: ");
+    Serial.println(song);
   }  
   
   if(cmd == '4') // Lights toggle
   {     
-     Serial.print("Send LED3 command");
-     Serial.println(val);
+    Serial.print("Set LED1 to: ");
+    Serial.println(val);
      
-     LED1M(val);
+    LED1M(val);
   }  
-  if(cmd == '5')
+
+  if(cmd == '5') //AI toggle
   {    
-     Serial.print("Set AI to : ");
-     Serial.println(val);
+    Serial.print("Set AI to: ");
+    Serial.println(val);
+
+    if(val == 0) 
+    {
+      WireSend(13);
+      AION = false;
+    }
+
+    if(val == 1) 
+    {
+      WireSend(2);
+      AION = true;
+    }
   }
-  if(cmd == '6')
+
+  if(cmd == '6') //Sleep toggle
   {
-    Serial.println("Mip Went to bed Good night");
+    Serial.println("Mip Went to bed... Good night");
+
+    sleep = true;
+    WireSend(8);
   }
 }
 
-//Method for sweeping the tail
-void Tail()
+//Method for sending Wire
+void WireSend(int var)
 {
-  tail.write(180);
-  delay(200);
-  tail.write(0);
-  delay(400);
-  tail.write(90);
+  Wire.beginTransmission(9);
+  Wire.write(var);
+  Wire.endTransmission();
 }
 
 //Method for measuring temperature & humidity
 void ReadTH()
 {
   THvalue = DHT.read11(TH);
+
   THtemp = DHT.temperature;
   Serial.print("Temperature = ");
   Serial.println(THtemp);
+
   THhumid = DHT.humidity;  
   Serial.print("Humidity = ");
   Serial.println(THhumid);
@@ -242,7 +275,7 @@ void ReadLight()
 {
   lightvalue = analogRead(LDR);
 
-  Serial.print("Read LDR at: ");
+  Serial.print("Light = ");
   Serial.println(lightvalue);
 
   if(lightvalue >= 200)
@@ -256,25 +289,16 @@ void ReadLight()
   }
 }
 
-//Method for sending mood to UNO
-void SendMood()
-{
-  
-}
-
 //Method for controlling LED batch 1
 void LED1M(int LEDvalue)
 {
   if(LEDvalue = 0)
   {
-    Serial.println("LOW");
     digitalWrite(LED1, LOW);
   }
 
   if(LEDvalue = 1)
   {
-    Serial.println("HIGH");
-    
     digitalWrite(LED1, HIGH);
   }
 }
@@ -286,10 +310,8 @@ void LED2M(byte b)
 }
 
 //Method for the making of sounds
-void Sounds(String s)
+void Sounds()
 { 
-  song = s;
-  
   Sing(song);
 }
 

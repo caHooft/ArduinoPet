@@ -1,6 +1,7 @@
 
 //All methods
 /*
+ * ReceiveEvent
  * LEDM
  * SaveUS
  * Neck
@@ -12,6 +13,12 @@
  * Tail
  * ReceiveMood
  * ChangeMood
+ * HappyBrows
+ * SadBrows
+ * AngryBrows
+ * DisgustedBrows
+ * ScaredBrows
+ * SleepBrows
  */
 
 //Including libraries
@@ -39,7 +46,9 @@ int x;
 int DistanceLeft = 0;
 int DistanceFront = 0;
 int DistanceRight = 0;
+int mipspeed;
 bool AION = true;
+bool sleep = false;
 
 //Declaring some hardware
 Servo neck;
@@ -50,7 +59,6 @@ void setup()
 {
   Wire.begin(9);
   Wire.onReceive(ReceiveEvent);
-  
   Serial.begin(9600);
   Serial.println("Arduino UNO 2 start");
   
@@ -106,12 +114,28 @@ void loop()
     AION = false;
   }
     
-  if(x >= 3 && x < 9)
+  if(x >= 3 && x < 8)
   {
     ChangeMood(x);
   }
-  
 
+  if(x == 8)
+  {
+    ChangeMood(8);
+    sleep = true;
+  }
+  
+  if(x == 14)
+  {
+    ChangeMood(3);
+    sleep = false;
+  }
+
+  if(x > 15)
+  {
+    mipspeed = x;
+  }
+  
   if(AION)
   {
     Serial.println();
@@ -125,13 +149,7 @@ void loop()
     {
       switch(x)
       {
-        case 9:
-        ToggleDir();
-        break;
-        case 10:
-        ToggleDir();
-        break;
-        
+                
       }
     }
   }
@@ -380,6 +398,11 @@ void ChangeMood(int i)
   {
     ScaredBrows();
   }
+
+  if(i == 8)
+  {
+    SleepBrows();
+  }
 }
 
 void HappyBrows()
@@ -546,3 +569,9 @@ void ScaredBrows()
   lcd.write(byte(4));
 }
 
+void SleepBrows()
+  {
+    lcd.clear();
+    lcd.setCursor(2, 1);
+    lcd.write("____    ____");
+  }

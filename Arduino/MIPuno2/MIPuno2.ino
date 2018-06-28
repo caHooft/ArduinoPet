@@ -40,6 +40,7 @@ int x; //x is de waarde die hij binnenkrijgt van de Wire
 int DistanceLeft = 0;
 int DistanceFront = 0;
 int DistanceRight = 0;
+bool AION = true;
 
 //Declaring some hardware
 Servo neck;
@@ -82,11 +83,8 @@ void loop()
   Serial.println();
   Serial.println("Restart loop");
   Serial.println();
-  Neck();
   Serial.println();
   Tail();
-  Serial.println();
-  RandomMove();
   Serial.println();
 
   if(x == 0) 
@@ -101,17 +99,30 @@ void loop()
 
   if(x == 2) 
   {
-    RandomMove();
+    AION = true;
   }
-
+  
+  if(x == 13){
+    AION = false;
+  }
+    
   if(x >= 3 && x < 9)
   {
     ChangeMood(x);
   }
   
-  if(x >= 9 && x <= 12)
-  {
-    ToggleDir(x - 8);
+
+  if(AION){
+    Serial.println();
+    Neck();
+    Serial.println();
+    RandomMove();
+  }
+  else if(!AION){
+    if(x >= 9 && x <= 12)
+    {
+      ToggleDir(x - 8);
+    }
   }
 }
 
